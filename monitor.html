@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Signos Vitales</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <style>
         body { 
@@ -16,16 +15,30 @@
             height: 100vh;
             flex-direction: column;
             text-align: center;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: #333;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
         }
 
         .container {
-            width: 90%;
-            max-width: 600px;
+            width: 80%; /* Reducir tamaño */
+            max-width: 350px; /* Reducir tamaño */
             background-color: #222;
-            padding: 20px;
+            padding: 10px;
             border-radius: 15px;
             text-align: center;
-            font-size: 1.8em;
+            font-size: 1.5em;
             position: absolute;
             cursor: grab;
             box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
@@ -41,22 +54,23 @@
         }
 
         /* Contenedores de signos vitales con colores distintivos */
-        #ecg-container { border: 3px solid red; top: 10%; left: 5%; }
-        #blood-pressure-container { border: 3px solid blue; top: 30%; left: 5%; }
-        #spo2-container { border: 3px solid green; top: 50%; left: 5%; }
-        #capnometry-container { border: 3px solid yellow; top: 70%; left: 5%; }
-        #heart-rate-container { border: 3px solid orange; top: 90%; left: 5%; }
+        #ecg-container { border: 3px solid red; }
+        #blood-pressure-container { border: 3px solid blue; }
+        #spo2-container { border: 3px solid green; }
+        #capnometry-container { border: 3px solid yellow; }
+        #heart-rate-container { border: 3px solid orange; }
+        #glucose-container { border: 3px solid purple; }
+        #history-container { border: 3px solid white; }
 
         /* Estilos de los botones */
         button {
-            margin-top: 10px;
-            padding: 15px;
+            padding: 10px;
             background-color: green;
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 1.5em;
-            border-radius: 10px;
+            font-size: 1.2em;
+            border-radius: 5px;
             transition: background 0.3s;
         }
 
@@ -64,6 +78,19 @@
     </style>
 </head>
 <body>
+    <div class="top-bar">
+        <button onclick="startSimulation()">Iniciar Simulación</button>
+        <button onclick="resetPositions()">Restablecer Posiciones</button>
+        <button>Opción 1</button>
+        <button>Opción 2</button>
+        <button>Opción 3</button>
+        <select>
+            <option>Seleccionar</option>
+            <option>Opción A</option>
+            <option>Opción B</option>
+        </select>
+    </div>
+
     <div id="ecg-container" class="container">
         <h3>Electrocardiograma (ECG)</h3>
         <canvas id="ecg-canvas"></canvas>
@@ -84,74 +111,79 @@
         <h3>Frecuencia Cardíaca</h3>
         <p id="hr-value" style="color: orange;">75 BPM</p>
     </div>
-    
-    <button onclick="startSimulation()">Iniciar Simulación</button>
-    <button onclick="resetPositions()">Restablecer Posiciones</button>
+    <div id="glucose-container" class="container">
+        <h3>Glicemia</h3>
+        <p id="glucose-value" style="color: purple;">90 mg/dL</p>
+    </div>
+    <div id="history-container" class="container">
+        <h3>Historia Clínica</h3>
+        <p id="history-value" style="color: white;">Sin información</p>
+    </div>
 
     <script>
-        // Función para obtener valores aleatorios en un rango dado
         function getRandomValue(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        // Función para actualizar los signos vitales cada 3 segundos con animación
         function updateParameters() {
-            gsap.to("#bp-value", { textContent: `${getRandomValue(110, 130)}/${getRandomValue(70, 90)} mmHg`, duration: 1, ease: "power2.out" });
-            gsap.to("#spo2-value", { textContent: `${getRandomValue(95, 100)}% SpO2`, duration: 1, ease: "power2.out" });
-            gsap.to("#capno-value", { textContent: `${getRandomValue(30, 45)} mmHg`, duration: 1, ease: "power2.out" });
-            gsap.to("#hr-value", { textContent: `${getRandomValue(60, 100)} BPM`, duration: 1, ease: "power2.out" });
+            document.getElementById("bp-value").textContent = `${getRandomValue(110, 130)}/${getRandomValue(70, 90)} mmHg`;
+            document.getElementById("spo2-value").textContent = `${getRandomValue(95, 100)}% SpO2`;
+            document.getElementById("capno-value").textContent = `${getRandomValue(30, 45)} mmHg`;
+            document.getElementById("hr-value").textContent = `${getRandomValue(60, 100)} BPM`;
+            document.getElementById("glucose-value").textContent = `${getRandomValue(70, 110)} mg/dL`;
         }
 
-        // Inicia la simulación de actualización automática
         function startSimulation() {
             setInterval(updateParameters, 3000);
             alert('Simulación iniciada');
         }
 
-        // Configurar elementos como arrastrables y guardar su posición en localStorage
+        // Guardar la posición al mover
+        function savePosition(id, x, y) {
+            localStorage.setItem(id + '-x', x);
+            localStorage.setItem(id + '-y', y);
+        }
+
+        // Cargar la posición guardada
+        function loadPosition(id) {
+            const x = localStorage.getItem(id + '-x') || 0;
+            const y = localStorage.getItem(id + '-y') || 0;
+            return { x: parseFloat(x), y: parseFloat(y) };
+        }
+
+        // Hacer los contenedores arrastrables con interact.js
         interact('.container').draggable({
-            inertia: true,
-            modifiers: [
-                interact.modifiers.snap({
-                    targets: [interact.snappers.grid({ x: 50, y: 50 })],
-                    range: Infinity,
-                    relativePoints: [{ x: 0.5, y: 0.5 }]
-                })
-            ],
-            listeners: {
-                move(event) {
-                    let target = event.target;
-                    let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                    let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-                    target.style.transform = `translate(${x}px, ${y}px)`;
-                    target.setAttribute('data-x', x);
-                    target.setAttribute('data-y', y);
-                    localStorage.setItem(target.id, JSON.stringify({ x, y }));
-                }
+            onmove(event) {
+                const target = event.target;
+                const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+                target.style.transform = `translate(${x}px, ${y}px)`;
+
+                target.setAttribute('data-x', x);
+                target.setAttribute('data-y', y);
+
+                // Guardar la posición
+                savePosition(target.id, x, y);
+            },
+            onstart(event) {
+                const target = event.target;
+                const pos = loadPosition(target.id);
+                target.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+                target.setAttribute('data-x', pos.x);
+                target.setAttribute('data-y', pos.y);
+            },
+            // Simulando un campo magnético (snap)
+            snap: {
+                targets: [
+                    interact.snappers.grid({ x: 50, y: 50 }) // "pegado" a una cuadrícula de 50px
+                ],
+                range: 30, // Distancia de atracción
+                relativePoints: [{ x: 0.5, y: 0.5 }]
             }
         });
 
-        // Restaurar posiciones guardadas al recargar la página
-        window.onload = function() {
-            document.querySelectorAll('.container').forEach(el => {
-                let savedPosition = JSON.parse(localStorage.getItem(el.id));
-                if (savedPosition) {
-                    el.style.transform = `translate(${savedPosition.x}px, ${savedPosition.y}px)`;
-                    el.setAttribute('data-x', savedPosition.x);
-                    el.setAttribute('data-y', savedPosition.y);
-                }
-            });
-        };
-
-        // Restablece las posiciones a su estado inicial
-        function resetPositions() {
-            document.querySelectorAll('.container').forEach(el => {
-                el.style.transform = "translate(0,0)";
-                el.setAttribute('data-x', 0);
-                el.setAttribute('data-y', 0);
-                localStorage.removeItem(el.id);
-            });
-        }
+        
     </script>
 </body>
 </html>

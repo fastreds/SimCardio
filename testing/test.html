@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de ECG</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="ecg-container">
+        <canvas id="ecg-chart"></canvas>
+        <button id="fullscreen-btn">Pantalla Completa</button>
+        <div id="controls">
+            <label>Frecuencia Cardíaca: <span id="hr-value">75</span> lpm</label>
+            <input type="range" id="hr-slider" min="30" max="300" value="75">
+
+            <label for="rhythm-select">Ritmo:</label>
+            <select id="rhythm-select">
+                <option value="sinus">Sinusal</option>
+                <!-- Más ritmos se pueden agregar aquí -->
+            </select>
+
+            <!-- Controles de duración -->
+            <h3>Duraciones (s)</h3>
+            <label>Onda P: <span id="ondaP-value">0.08</span>s</label>
+            <input type="range" class="param-slider" data-param="ondaP" min="0.05" max="0.12" step="0.01" value="0.08">
+            
+            <label>Segmento PR: <span id="segmentoPR-value">0.12</span>s</label>
+            <input type="range" class="param-slider" data-param="segmentoPR" min="0.10" max="0.20" step="0.01" value="0.12">
+
+            <label>Complejo QRS: <span id="complejoQRS-value">0.10</span>s</label>
+            <input type="range" class="param-slider" data-param="complejoQRS" min="0.06" max="0.12" step="0.01" value="0.10">
+
+            <label>Segmento ST: <span id="segmentoST-value">0.16</span>s</label>
+            <input type="range" class="param-slider" data-param="segmentoST" min="0.10" max="0.20" step="0.01" value="0.16">
+
+            <!-- Controles de elevación (mV) -->
+            <h3>Elevaciones (mV)</h3>
+            <label>Elevación ST: <span id="elevacionST-value">0.05</span>mV</label>
+            <input type="range" class="param-slider" data-param="elevacionST" min="-0.2" max="0.2" step="0.01" value="0.05">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

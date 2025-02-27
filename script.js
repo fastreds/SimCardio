@@ -22,10 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 datasets: [{
                     label: "ECG",
                     borderColor: "green",
-                    borderWidth: 1.5,
+                    borderWidth: 2,
                     fill: true,
                     data: ecgData,
-                    tension: 0.3, // Suaviza la línea para dar fluidez
+                    tension: 0.1, // Suaviza la línea para dar fluidez
                 }],
             },
             options: {
@@ -53,13 +53,25 @@ document.addEventListener("DOMContentLoaded", function () {
         switch (rhythmType) {
             case 'sinus': // Ritmo Sinusal
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
-                bpm = 75;
-                if (t < 0.1) value = 0.1 * Math.sin(t * Math.PI * 10); // Onda P
-                else if (t < 0.12) value = -0.15; // Onda Q
-                else if (t < 0.14) value = 0.8; // Pico R
-                else if (t < 0.16) value = -0.3; // Onda S
-                else if (t < 0.3) value = 0.25 * Math.sin((t - 0.16) * Math.PI * 5); // Onda T
+                 // Definimos duraciones de cada onda/segmento en proporción al ciclo cardíaco
+                let duracionOndaP = 0.08;  // 80 ms
+                let segmentoPR = 0.08;     // 120 ms
+                let complejoQRS = 0.10;    // 100 ms
+                let segmentoST = 0.1;   
+                let intervaloQT = 0.005;    // 400 ms
+                let ondaT = 0.10;    // 400 ms
+
+                if (t < duracionOndaP) value = 0.1 * Math.sin(t * Math.PI * 10); // Onda P
+                else if (t < duracionOndaP + segmentoPR) value = 0; // Segmento PR (Isoeléctrico)
+                else if (t < duracionOndaP + segmentoPR + 0.02) value = -0.15; // Onda Q
+                else if (t < duracionOndaP + segmentoPR + 0.04) value = 0.8; // Pico R
+                else if (t < duracionOndaP + segmentoPR + complejoQRS ) value = 0; // Onda S
+                else if (t < duracionOndaP + segmentoPR + complejoQRS + segmentoST) value = 0; // Segmento ST 
+                else if (t < duracionOndaP + segmentoPR + complejoQRS + segmentoST + intervaloQT) value = 0.25 * Math.sin((t - (duracionOndaP + segmentoPR + complejoQRS + segmentoST)) * Math.PI * 5); // Onda T
+                else if (t < duracionOndaP + segmentoPR + complejoQRS + segmentoST + intervaloQT) value = value = 0.5 * Math.sin(t * Math.PI * 10); // Onda T
                 break;
+
+                
 
             case 'afib': // Fibrilación Auricular
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
@@ -75,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 bpm = 165;
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
                 if (t < 0.05) value = 0.1; // Onda P casi inexistente
-                else if (t < 0.2) value = 0.8 * Math.sin(t * Math.PI * 10); // Pico QRS
+                else if (t < 0.2) value = 0.25 * Math.sin(t * Math.PI * 10); // Pico QRS
                 else if (t < 0.24) value = -0.8 * Math.sin(t * Math.PI * 5); // Onda S
                 else if (t < 0.25) value = 0.0; // Onda T pequeña o inexistente
                 else if (t < 0.30) value = 0.2 * Math.sin((t - 0.25) * Math.PI * 4); // Onda T
@@ -96,6 +108,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (t < 0.32) value = 0.3 * Math.sin((t - randomBetween(-0.1, 0.7)) * Math.PI * randomBetween(3, 4)); // Oscilación suave y redonda
                 else if (t < 0.34) value = -0.2 * Math.sin(t * Math.PI * randomBetween(1.5, 2)); // Oscilación rápida y suave, sin picos bruscos
                 else if (t < 0.36) value = 0.1 * Math.sin(t * Math.PI * randomBetween(1.2, 1.8)); // Otra pequeña oscilación redondeada
+                break;
+
+            case 'TSV': // Ritmo Sinusal
+                bpm = 189;
+                t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
+                if (t < 0.1) value = 0.0 * Math.sin(t * Math.PI * 10); // Onda P
+                else if (t < 0.12) value = -0.15; // Onda Q
+                else if (t < 0.14) value = 0.8; // Pico R
+                else if (t < 0.16) value = -0.3; // Onda S
+                else if (t < 0.3) value = 0.25 * Math.sin((t - 0.16) * Math.PI * 5); // Onda T
                 break;
 
             case 'BS': // Bradicardia Sinusal
@@ -123,24 +145,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 // La señal será prácticamente plana con apenas variación
                 break;
 
-
-                case 'BAV1': // Bloqueo AV de primer grado
+            case 'BAV1': // Bloqueo AV de primer grado
                 bpm = 50; // Frecuencia cardíaca
-                
+
                 // Intervalo PR prolongado (30 ms = 0.030 segundos)
                 const intervaloPR = 0.030; // Intervalo PR mínimo
-                
+
                 // Calcular el valor de 't' para el retraso en el intervalo PR
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
-                
+
                 // Generar la señal ECG con la prolongación del intervalo PR
                 if (t < 0.1) value = 0.1 * Math.sin(t * Math.PI * 10); // Onda P
-                else if (t < 0.1 ) value = -0.15; // Onda Q (con un retraso mínimo de 30ms)
+                else if (t < 0.1) value = -0.15; // Onda Q (con un retraso mínimo de 30ms)
                 else if (t < 0.14 + intervaloPR) value = 0.8; // Pico R
                 else if (t < 0.16) value = -0.3; // Onda S
                 else if (t < 0.3) value = 0.25 * Math.sin((t - 0.16) * Math.PI * 5); // Onda T
                 break;
-            
+
 
 
             default:
@@ -188,6 +209,12 @@ document.addEventListener("DOMContentLoaded", function () {
         startECG(); // Reiniciar con la nueva frecuencia
     });
 
+
+    function setRhythm(type) {
+        rhythmType = type;
+        index = 0;
+        startECG();
+    }
     // Menú desplegable para seleccionar el ritmo
     const rhythmSelect = document.getElementById("rhythm-select");
 

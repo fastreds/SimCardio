@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentInterval = 1000 / hr; // Intervalo en milisegundos (cada latido debe ser 1 segundo)
     const paperSpeed = 25; // Velocidad del papel en mm/s (típico para 25 mm/s)
     let rhythmType = 'sinus'; // Ritmo inicial
+    window.setRhythm = setRhythm;
 
     // Crear el gráfico
     function createECGChart() {

@@ -17,6 +17,16 @@ body {
     text-align: center;
 }
 
+
+#BloodPresure-container {
+    width: 90%;
+    max-width: 600px;
+    background-color: #111;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
 canvas {
     background-color: black;
 }

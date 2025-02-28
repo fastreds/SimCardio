@@ -1,0 +1,102 @@
+body { 
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    padding-top: 60px;
+}
+
+.top-bar {
+    width: 100%;
+    background: #333;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    width: 90%;
+    max-width: 900px;
+}
+
+.container {
+    background-color: #222;
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 1.2em;
+    cursor: grab;
+    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+p {
+    font-weight: bold;
+    width: 90%;
+    height: 30%;
+    font-size: 1.8em; 
+    background-color: black;
+    display: inline-block;
+    padding: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+button {
+    padding: 10px;
+    background-color: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+button:hover { background-color: darkgreen; }
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    p {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    p {
+        font-size: 1.2em;
+    }
+}
+
+#ecg-container { border: 3px solid red; width: 550px; }
+#blood-pressure-container { border: 3px solid blue; }
+#spo2-container { border: 3px solid green; }
+#capnometry-container { border: 3px solid yellow; }
+#heart-rate-container { border: 3px solid orange; }
+#glucose-container { border: 3px solid purple; }
+#history-container { border: 3px solid white; }

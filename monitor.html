@@ -6,116 +6,14 @@
     <title>Simulador de Signos Vitales</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <link rel="stylesheet" href="ecg/ecg.css">
+    <link rel="stylesheet" href="style.css">
     
-    <style>
-        body { 
-            background-color: black;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            overflow: hidden;
-            padding-top: 60px;
-        }
-
-        .top-bar {
-            width: 100%;
-            background: #333;
-            padding: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-            width: 90%;
-            max-width: 900px;
-        }
-
-        .container {
-            background-color: #222;
-            padding: 10px;
-            border-radius: 15px;
-            text-align: center;
-            font-size: 1.2em;
-            cursor: grab;
-            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
-            position: relative;
-        }
-
-        p {
-            font-weight: bold;
-            width: 90%;
-            height: 30%;
-            font-size: 1.8em; 
-            background-color: black;
-            display: inline-block;
-            padding: 10px;
-            border-radius: 9px;
-            cursor: pointer;
-        }
-
-        button {
-            padding: 10px;
-            background-color: green;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-
-        button:hover { background-color: darkgreen; }
-
-        @media (max-width: 768px) {
-            .grid-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            p {
-                font-size: 1.5em;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .grid-container {
-                grid-template-columns: 1fr;
-            }
-
-            .top-bar {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            p {
-                font-size: 1.2em;
-            }
-        }
-
-        #ecg-container { border: 3px solid red; width: 550px; }
-        #blood-pressure-container { border: 3px solid blue; }
-        #spo2-container { border: 3px solid green; }
-        #capnometry-container { border: 3px solid yellow; }
-        #heart-rate-container { border: 3px solid orange; }
-        #glucose-container { border: 3px solid purple; }
-        #history-container { border: 3px solid white; }
-    </style>
 </head>
 <body>
     <div class="top-bar">
         <button onclick="startSimulation()">Iniciar Simulación</button>
         <button onclick="resetPositions()">Restablecer Posiciones</button>
+        <button id="fullscreen-btn">Pantalla Completa</button>
         <div id="controls">
             <label>Frecuencia Cardíaca: <span id="hr-value">75</span> lpm</label>
             <input type="range" id="hr-slider" min="30" max="300" value="75">
@@ -131,7 +29,7 @@
                 <!-- Puedes agregar más ritmos aquí -->
             </select>
 
-            <button id="fullscreen-btn">Pantalla Completa</button>
+  
     </div>
 
     <div class="grid-container">
@@ -145,71 +43,9 @@
 
     </div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="ecg/ecg.js"></script>
-    <script>
-  
-        function startSimulation() {
-            setInterval(updateParameters, 5000);
-           
-        }
+    <script src="script.js"></script>
 
-        function getRandomValue(base, range) {
-            return Math.floor(base + (Math.random() * (range * 2 + 1)) - range);
-        }
-
-        function updateParameters(params = {}) {
-            const defaultValues = {
-                "bp-value": `${getRandomValue(120, 5)}/${getRandomValue(80, 5)}`,
-                "spo2-value": `${getRandomValue(97, 3)}% `,
-                "capno-value": `${getRandomValue(37, 5)} `,
-                "hr-value": `${getRandomValue(80, 20)} `,
-                "glucose-value": `${getRandomValue(90, 20)}`
-            };
-
-            Object.keys(defaultValues).forEach(key => {
-                let value = params[key];
-                
-                if (value === undefined) {
-                    value = defaultValues[key];
-                } else if (value === "") {
-                    value = "- -";
-                } else if (!isNaN(value)) {
-                    value = getRandomValue(parseInt(value), 5);
-                }
-                
-                document.getElementById(key).textContent = value;
-            });
-        }
-
-        interact('.container').draggable({
-          
-            onmove(event) {
-                const target = event.target;
-                const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-                target.style.transform = `translate(${x}px, ${y}px)`;
-                target.setAttribute('data-x', x);
-                target.setAttribute('data-y', y);
-            },
-                    // Simulando un campo magnético (snap)
-        snap: {
-            targets: [
-                interact.snappers.grid({ x: 25, y: 25 }) // "pegado" a una cuadrícula de 25px   
-            ],
-            range: 30, // Distancia de atracción
-            relativePoints: [{ x: 0.25, y: 0.25 }]
-        }
-        });
-
-        function resetPositions() {
-            document.querySelectorAll('.container').forEach(el => {
-                el.style.transform = 'translate(0, 0)';
-                el.setAttribute('data-x', 0);
-                el.setAttribute('data-y', 0);
-            });
-        }
-    </script>
 </body>
 </html>

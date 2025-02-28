@@ -225,24 +225,5 @@ document.addEventListener("DOMContentLoaded", function () {
         startECG(); // Reiniciar con el nuevo ritmo
     });
 
-    // Pantalla completa
-    const fullscreenBtn = document.getElementById("fullscreen-btn");
 
-    function enterFullscreen() {
-        let elem = document.documentElement;
-        if (elem.requestFullscreen) elem.requestFullscreen();
-        else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-    }
-
-    fullscreenBtn.addEventListener("click", enterFullscreen);
-
-    if (window.innerWidth < 768) {
-        document.addEventListener("touchstart", enterFullscreen, { once: true });
-    }
-
-    function randomBetween(min, max) {
-        return Math.random() * (max - min) + min;
-    }
 });

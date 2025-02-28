@@ -97,3 +97,51 @@ setRhythm("sinus");
 
 // Llamada sin parámetros (usará valores por defecto)
 updateParameters();*/
+
+
+
+
+
+const casos = [
+    {
+        paciente: "Hombre, 58 años, sobrepeso, hipertensión, tabaquismo. Dolor torácico opresivo irradiado a brazo izquierdo, sudoración, náuseas.",
+        etapas: [
+            { bp: "145/90", spo2: "96", capno: "55", hr: "98", glucose: "95", ritmo: "elevacion_st" },
+            { bp: "130/85", spo2: "94", capno: "55", hr: "110", glucose: "95", ritmo: "taquicardia_sinusal" },
+            { bp: "105/70", spo2: "88", capno: "55", hr: "120", glucose: "95", ritmo: "fibrilacion_ventricular" },
+            { bp: "125/80", spo2: "98", capno: "55", hr: "80", glucose: "95", ritmo: "sinusal" }
+        ]
+    }
+];
+
+let casoActual = 0;
+let etapaActual = 0;
+
+document.getElementById("iniciar_caso-btn").addEventListener("click", function () {
+    etapaActual = 0;
+    actualizarCaso();
+});
+
+document.getElementById("paso_caso-btn").addEventListener("click", function () {
+    if (etapaActual < casos[casoActual].etapas.length - 1) {
+        etapaActual++;
+        actualizarCaso();
+    } else {
+        alert("Caso finalizado");
+    }
+});
+
+function actualizarCaso() {
+    const etapa = casos[casoActual].etapas[etapaActual];
+    updateParameters({
+        "bp-value": etapa.bp,
+        "spo2-value": etapa.spo2,
+        "capno-value": etapa.capno,
+        "hr-value": etapa.hr,
+        "glucose-value": etapa.glucose,
+        "Clinic_data": casos[casoActual].paciente
+    });
+    setRhythm(etapa.ritmo);
+}
+
+undefined

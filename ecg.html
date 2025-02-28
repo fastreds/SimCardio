@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de ECG</title>
+    <link rel="stylesheet" href="ecg/ecg.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="ecg-container">
+        <canvas id="ecg-chart"></canvas>
+      
+        <div id="controls">
+            <label>Frecuencia Cardíaca: <span id="hr-value">75</span> lpm</label>
+            <input type="range" id="hr-slider" min="30" max="300" value="75">
+            <select id="rhythm-select">
+                <option value="sinus">Sinusal</option>
+                <option value="afib">Fibrilación Auricular</option>
+                <option value="TV">Taquicardia Ventricuar</option>
+                <option value="BS">Bradicardia Sinusal</option>
+                <option value="FV">FV</option>
+                <option value="Asistolia">Asistolia</option>
+                <option value="BAV1">BAV1</option>
+                <option value="TSV">TSV</option>TSV
+                <!-- Puedes agregar más ritmos aquí -->
+            </select>
+            
+        </div>
+
+        <div id="BloodPresure-container">
+
+            <label>Presión Arterial<span id="hr-value">75/40</span> mm/Hg</label>
+
+        </div>
+
+          <button id="fullscreen-btn">Pantalla Completa</button>
+    </div>
+
+    
+
+    <script src="ecg/ecg.js"></script>
+</body>
+</html>

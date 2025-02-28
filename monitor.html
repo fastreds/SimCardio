@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Signos Vitales</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
+    <link rel="stylesheet" href="ecg/ecg.css">
+    
     <style>
         body { 
             background-color: black;
@@ -101,7 +103,7 @@
             }
         }
 
-        #ecg-container { border: 3px solid red; }
+        #ecg-container { border: 3px solid red; width: 550px; }
         #blood-pressure-container { border: 3px solid blue; }
         #spo2-container { border: 3px solid green; }
         #capnometry-container { border: 3px solid yellow; }
@@ -114,17 +116,38 @@
     <div class="top-bar">
         <button onclick="startSimulation()">Iniciar Simulación</button>
         <button onclick="resetPositions()">Restablecer Posiciones</button>
+        <div id="controls">
+            <label>Frecuencia Cardíaca: <span id="hr-value">75</span> lpm</label>
+            <input type="range" id="hr-slider" min="30" max="300" value="75">
+            <select id="rhythm-select">
+                <option value="sinus">Sinusal</option>
+                <option value="afib">Fibrilación Auricular</option>
+                <option value="TV">Taquicardia Ventricuar</option>
+                <option value="BS">Bradicardia Sinusal</option>
+                <option value="FV">FV</option>
+                <option value="Asistolia">Asistolia</option>
+                <option value="BAV1">BAV1</option>
+                <option value="TSV">TSV</option>TSV
+                <!-- Puedes agregar más ritmos aquí -->
+            </select>
+
+            <button id="fullscreen-btn">Pantalla Completa</button>
     </div>
 
     <div class="grid-container">
-        <div id="ecg-container" class="container"> <h3>ECG</h3> <canvas id="ecg-canvas"></canvas> </div>
+   
         <div id="blood-pressure-container" class="container"> <h3>Presión Arterial - mmHg</h3> <p id="bp-value">120/80 </p> </div>
         <div id="spo2-container" class="container"> <h3>Oximetría SpO2</h3> <p id="spo2-value">98% </p> </div>
         <div id="capnometry-container" class="container"> <h3>Capnometría mmHg</h3> <p id="capno-value">35 </p> </div>
         <div id="heart-rate-container" class="container"> <h3>Frecuencia Cardíaca - BPM</h3> <p id="hr-value">75 </p> </div>
         <div id="glucose-container" class="container"> <h3>Glicemia mg/dL</h3> <p id="glucose-value">90 </p> </div>
+        <div id="ecg-container" class="container"> <h3>ECG</h3> <canvas id="ecg-chart"></canvas> </div>
+
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="ecg/ecg.js"></script>
     <script>
   
         function startSimulation() {

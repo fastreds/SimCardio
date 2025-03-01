@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let updateInterval = null; // Intervalo de actualización
     let currentInterval = 1000 / hr; // Intervalo en milisegundos (cada latido debe ser 1 segundo)
     const paperSpeed = 25; // Velocidad del papel en mm/s (típico para 25 mm/s)
-    let rhythmType = 'sinus'; // Ritmo inicial
+    let rhythmType = 'sinusal'; // Ritmo inicial
     window.setRhythm = setRhythm;
 
     // Crear el gráfico
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let value = 0;
 
         switch (rhythmType) {
-            case 'sinus': // Ritmo Sinusal
+            case 'sinusal': // Ritmo Sinusal
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
                  // Definimos duraciones de cada onda/segmento en proporción al ciclo cardíaco
                 let duracionOndaP = 0.08;  // 80 ms
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (t < duracionOndaP + segmentoPR) value = 0; // Segmento PR (Isoeléctrico)
                 else if (t < duracionOndaP + segmentoPR + 0.02) value = -0.15; // Onda Q
                 else if (t < duracionOndaP + segmentoPR + 0.04) value = 0.8; // Pico R
-                else if (t < duracionOndaP + segmentoPR + complejoQRS ) value = 0; // Onda S
+                else if (t < duracionOndaP + segmentoPR + complejoQRS ) value = 0.15; // Onda S
                 else if (t < duracionOndaP + segmentoPR + complejoQRS + segmentoST) value = 0; // Segmento ST 
                 else if (t < duracionOndaP + segmentoPR + complejoQRS + segmentoST + intervaloQT) value = 0.25 * Math.sin((t - (duracionOndaP + segmentoPR + complejoQRS + segmentoST)) * Math.PI * 5); // Onda T
                 else if (t < duracionOndaP + segmentoPR + complejoQRS + segmentoST + intervaloQT) value = value = 0.5 * Math.sin(t * Math.PI * 10); // Onda T
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
 
             case 'FV': // Fibrilación Ventricular (Ritmo desorganizado)
-                bpm = 250; // Frecuencia cardíaca elevada para un ritmo rápido (taquicardia)
+          
                 // Ajustamos 't' para incrementar la irregularidad entre las ondas
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * randomBetween(250, 350)); // Tiempo irregular
 
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
 
             case 'TSV': // Ritmo Sinusal
-                bpm = 189;
+
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
                 if (t < 0.1) value = 0.0 * Math.sin(t * Math.PI * 10); // Onda P
                 else if (t < 0.12) value = -0.15; // Onda Q
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
 
             case 'BS': // Bradicardia Sinusal
-                bpm = 45; // Forzar la frecuencia a 45 latidos por minuto para bradicardia
+          
                 t = (index % Math.round((50 / bpm) * 250)) / Math.round((60 / bpm) * 250);
                 if (t < 0.1) value = 0.1 * Math.sin(t * Math.PI * 10); // Onda P
                 else if (t < 0.12) value = -0.15; // Onda Q
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
 
             case 'Asistolia': // Asistolia (Ritmo plano)
-                bpm = 0; // No hay latidos en asistolia, por lo que la frecuencia es 0
+             
 
                 // Ajustamos 't' para generar una señal que sea prácticamente plana
                 t = (index % Math.round((paperSpeed / bpm) * 1)) / Math.round((60 / bpm) * 1000); // Sin actividad regular
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
 
             case 'BAV1': // Bloqueo AV de primer grado
-                bpm = 50; // Frecuencia cardíaca
+               
 
                 // Intervalo PR prolongado (30 ms = 0.030 segundos)
                 const intervaloPR = 0.030; // Intervalo PR mínimo
@@ -211,9 +211,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-    function setRhythm(type) {
+    function setRhythm(type,Newbpm) {
         rhythmType = type;
         index = 0;
+        bpm = Newbpm;
         startECG();
     }
     // Menú desplegable para seleccionar el ritmo

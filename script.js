@@ -1,9 +1,3 @@
-function startSimulation() {
-    setInterval(updateParameters, 5000);
-    setRhythm("sinus");
-   
-}
-
 function getRandomValue(base, range) {
     return Math.floor(base + (Math.random() * (range * 2 + 1)) - range);
 }
@@ -14,7 +8,11 @@ function updateParameters(params = {}) {
         "spo2-value": `${getRandomValue(97, 3)}% `,
         "capno-value": `${getRandomValue(37, 5)} `,
         "hr-value": `${getRandomValue(80, 20)} `,
-        "glucose-value": `${getRandomValue(90, 20)}`
+        "glucose-value": `${getRandomValue(90, 20)}`,
+        "history-container": "historia clínica"
+        
+    
+     
     };
 
     Object.keys(defaultValues).forEach(key => {
@@ -61,27 +59,36 @@ function resetPositions() {
 }
 
 
-    // Pantalla completa
+
+// Pantalla completa
 const fullscreenBtn = document.getElementById("fullscreen-btn");
 
-function enterFullscreen() {
-let elem = document.documentElement;
-if (elem.requestFullscreen) elem.requestFullscreen();
-else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
-else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+function toggleFullscreen() {
+    if (!document.fullscreenElement && !document.mozFullScreenElement && 
+        !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        // Activar pantalla completa
+        let elem = document.documentElement;
+        if (elem.requestFullscreen) elem.requestFullscreen();
+        else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+        else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+    } else {
+        // Salir de pantalla completa
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
 }
 
-fullscreenBtn.addEventListener("click", enterFullscreen);
+fullscreenBtn.addEventListener("click", toggleFullscreen);
 
+// Activar pantalla completa automáticamente en móviles al tocar la pantalla
 if (window.innerWidth < 768) {
-document.addEventListener("touchstart", enterFullscreen, { once: true });
+    document.addEventListener("touchstart", toggleFullscreen, { once: true });
 }
 
-function randomBetween(min, max) {
-return Math.random() * (max - min) + min;
-}
-
+/***********************************fin pantalla completa *********************************** */
 
 /*
 // Llamada con algunos valores vacíos
@@ -99,23 +106,27 @@ setRhythm("sinus");
 updateParameters();*/
 
 
-
-
-
-const casos = [
-    {
-        paciente: "Hombre, 58 años, sobrepeso, hipertensión, tabaquismo. Dolor torácico opresivo irradiado a brazo izquierdo, sudoración, náuseas.",
-        etapas: [
-            { bp: "145/90", spo2: "96", capno: "55", hr: "98", glucose: "95", ritmo: "elevacion_st" },
-            { bp: "130/85", spo2: "94", capno: "55", hr: "110", glucose: "95", ritmo: "taquicardia_sinusal" },
-            { bp: "105/70", spo2: "88", capno: "55", hr: "120", glucose: "95", ritmo: "fibrilacion_ventricular" },
-            { bp: "125/80", spo2: "98", capno: "55", hr: "80", glucose: "95", ritmo: "sinusal" }
-        ]
-    }
-];
-
+// Gestion de casos
 let casoActual = 0;
 let etapaActual = 0;
+
+
+/// llena el select con los casos disponibles
+document.addEventListener("DOMContentLoaded", function () {
+    const selectCaso = document.getElementById("caso-select");
+    casos.forEach((caso, index) => {
+        let option = document.createElement("option");
+        option.value = index;
+        option.textContent = `Caso ${caso.paciente.split(" ",4)}`;
+        selectCaso.appendChild(option);
+    });
+});
+
+document.getElementById("caso-select").addEventListener("change", function () {
+    casoActual = this.selectedIndex;
+    etapaActual = 0;
+    actualizarCaso();
+});
 
 document.getElementById("iniciar_caso-btn").addEventListener("click", function () {
     etapaActual = 0;
@@ -133,15 +144,18 @@ document.getElementById("paso_caso-btn").addEventListener("click", function () {
 
 function actualizarCaso() {
     const etapa = casos[casoActual].etapas[etapaActual];
+    let  message =casos[casoActual].paciente +  etapa.infoAdicional ; 
     updateParameters({
         "bp-value": etapa.bp,
         "spo2-value": etapa.spo2,
         "capno-value": etapa.capno,
         "hr-value": etapa.hr,
         "glucose-value": etapa.glucose,
-        "Clinic_data": casos[casoActual].paciente
+        "history-container": message
     });
-    setRhythm(etapa.ritmo);
+    setRhythm(etapa.ritmo,etapa.hr);
 }
 
 undefined
+
+/***********************************fin  casos *********************************** */

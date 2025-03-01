@@ -99,4 +99,4 @@ button:hover { background-color: darkgreen; }
 #capnometry-container { border: 3px solid yellow; }
 #heart-rate-container { border: 3px solid orange; }
 #glucose-container { border: 3px solid purple; }
-#history-container { border: 3px solid white; }
+#history-container { border: 3px solid white; width: 600px; }

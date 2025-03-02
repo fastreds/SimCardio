@@ -164,6 +164,7 @@ function actualizarCaso() {
         "glucose-value": etapa.glucose,
         "history-container": message
     });
+    if(!etapa.ritmo)  etapa.ritmo = "ASISTOLIA";
     setRhythm(etapa.ritmo,etapa.hr);
 }
 

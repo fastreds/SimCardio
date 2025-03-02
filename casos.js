@@ -1,9 +1,10 @@
 const casos = [
     {
-        paciente: "Hombre, 78 años, insuficiencia cardíaca avanzada. Encontrado inconsciente.",
+        paciente: "Hombre, 98 años, insuficiencia cardíaca avanzada. Encontrado inconsciente.",
         etapas: [
             {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "asistolia" },
-            {infoAdicional: "No respuesta tras RCP y adrenalina", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "asistolia" }
+            {infoAdicional: "No respuesta tras RCP y adrenalina", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "asistolia" },
+            {infoAdicional: "Se aplica adrenalina, no hay respuesta", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "asistolia" }
         ]
     },
     {
@@ -20,7 +21,7 @@ const casos = [
         etapas: [
             {infoAdicional: "Colapso súbito en estacionamiento", bp: "--", spo2: "--", capno: "--", hr: "190", glucose: "105", ritmo: "TVSP" },
             {infoAdicional: "Se aplica descarga con DEA", bp: "90/60", spo2: "92", capno: "--", hr: "50", glucose: "105", ritmo: "bradicardia" },
-            {infoAdicional: "Paciente comienza a reaccionar", bp: "120/80", spo2: "96", capno: "--", hr: "75", glucose: "105", ritmo: "sinusal" }
+            {infoAdicional: "Paciente comienza a reaccionar", bp: "120/85", spo2: "96", capno: "--", hr: "75", glucose: "105", ritmo: "sinusal" }
         ]
     },
     {

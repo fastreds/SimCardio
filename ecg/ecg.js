@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let updateInterval = null; // Intervalo de actualización
     let currentInterval = 1000 / hr; // Intervalo en milisegundos (cada latido debe ser 1 segundo)
     const paperSpeed = 25; // Velocidad del papel en mm/s (típico para 25 mm/s)
-    let rhythmType = 'sinusal'; // Ritmo inicial
+    let rhythmType = 'asistolia'; // Ritmo inicial
     window.setRhythm = setRhythm;
 
     // Crear el gráfico
@@ -131,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (t < 0.2) value = 0.25 * Math.sin((t - 0.16) * Math.PI * 5); // Onda T
 
 
-                hrSlider.disabled = true; // Bloquear el slider
                 break;
 
             case 'Asistolia': // Asistolia (Ritmo plano)
@@ -168,10 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             default:
                 break;
         }
-        // Actualizar el slider
-        hrSlider.value = bpm;
-        hrValue.textContent = bpm;
-        hrSlider.disabled = false; // Desbloquear el slider después de actualizar
+
         return value;
     }
 
@@ -199,16 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
     createECGChart();
     startECG();
 
-    // Control de frecuencia cardíaca
-    const hrSlider = document.getElementById("hr-slider");
-    const hrValue = document.getElementById("hr-value");
 
-    hrSlider.addEventListener("input", function () {
-        hr = this.value;
-        hrValue.textContent = hr;
-        index = 0; // Reiniciar el ciclo
-        startECG(); // Reiniciar con la nueva frecuencia
-    });
 
 
     function setRhythm(type,Newbpm) {
@@ -217,14 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
         bpm = Newbpm;
         startECG();
     }
-    // Menú desplegable para seleccionar el ritmo
-    const rhythmSelect = document.getElementById("rhythm-select");
 
-    rhythmSelect.addEventListener("change", function () {
-        rhythmType = this.value;
-        index = 0; // Reiniciar el ciclo
-        startECG(); // Reiniciar con el nuevo ritmo
-    });
 
 
 });

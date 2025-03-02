@@ -13,33 +13,14 @@
     <div class="top-bar">
         <button onclick="resetPositions()">Restablecer Posiciones</button>
         <button id="fullscreen-btn">Pantalla Completa</button>
-        --
-        <select id="caso-select">
-    
-        </select>
+        <select id="caso-select">        </select>
+
        
         <button id="iniciar_caso-btn">iniciar caso</button>
         <button id="paso_caso-btn">Avanzar</button>
-
-        <div id="controls">
-            <label>Frecuencia Cardíaca: <span id="hr-value">75</span> lpm</label>
-            <input type="range" id="hr-slider" min="30" max="300" value="75">
-            <select id="rhythm-select">
-                <option value="sinusal">Sinusal</option>
-                <option value="afib">Fibrilación Auricular</option>
-                <option value="TV">Taquicardia Ventricuar</option>
-                <option value="BS">Bradicardia Sinusal</option>
-                <option value="FV">Fibrilacion Ventricular</option>
-                <option value="Asistolia">Asistolia</option>
-                <option value="BAV1">Bloqueo AV de primer grado</option>
-                <option value="TSV">Taquicardia Sipra Ventricular</option>TSV
-                <!-- Puedes agregar más ritmos aquí -->
-            </select>
-
-        </div>
-
        
     </div>
+    <br><br>
     <div id="history-container" class="container"> <h3>Historia</h3>  </div>
     <div class="grid-container">
    
@@ -49,10 +30,13 @@
         <div id="heart-rate-container" class="container"> <h3>Frecuencia Cardíaca - BPM</h3> <p id="hr-value">75 </p> </div>
         <div id="glucose-container" class="container"> <h3>Glicemia mg/dL</h3> <p id="glucose-value">90 </p> </div>
         <div id="ecg-container" class="container">  <canvas id="ecg-chart"></canvas> </div>
-     
+        
+      
 
     </div>
-  
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="ecg/ecg.js"></script>
     <script src="script.js"></script>

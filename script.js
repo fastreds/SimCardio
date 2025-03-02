@@ -2,14 +2,25 @@ function getRandomValue(base, range) {
     return Math.floor(base + (Math.random() * (range * 2 + 1)) - range);
 }
 
+
+
+/// valores iniciales para monitor sin conetar
+
+// Llamada con algunos valores vacíos
+updateParameters({
+
+});
+
+
+
 function updateParameters(params = {}) {
     const defaultValues = {
-        "bp-value": `${getRandomValue(120, 5)}/${getRandomValue(80, 5)}`,
-        "spo2-value": `${getRandomValue(97, 3)}% `,
-        "capno-value": `${getRandomValue(37, 5)} `,
-        "hr-value": `${getRandomValue(80, 20)} `,
-        "glucose-value": `${getRandomValue(90, 20)}`,
-        "history-container": "historia clínica"
+        "bp-value": `0`,
+        "spo2-value": `0% `,
+        "capno-value": `0 `,
+        "hr-value": `0 `,
+        "glucose-value": `0`,
+        "history-container": "Monitor sin conectar"
         
     
      
@@ -125,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
 document.getElementById("caso-select").addEventListener("change", function () {
     casoActual = this.selectedIndex;
     etapaActual = 0;
-    actualizarCaso();
+    //actualizarCaso();
 });
 
 document.getElementById("iniciar_caso-btn").addEventListener("click", function () {

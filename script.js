@@ -37,7 +37,7 @@ function updateParameters(params = {}) {
             value = getRandomValue(parseInt(value), 5);
         }
         
-        document.getElementById(key).textContent = value;
+        document.getElementById(key).innerHTML  = value;
     });
 }
 
@@ -101,20 +101,6 @@ if (window.innerWidth < 768) {
 
 /***********************************fin pantalla completa *********************************** */
 
-/*
-// Llamada con algunos valores vacíos
-updateParameters({
-    "bp-value": "",
-    "spo2-value": "",
-    "capno-value": "55",
-    "hr-value": "250",
-    "glucose-value": ""
-});
-
-setRhythm("sinus");
-
-// Llamada sin parámetros (usará valores por defecto)
-updateParameters();*/
 
 
 // Gestion de casos
@@ -155,7 +141,12 @@ document.getElementById("paso_caso-btn").addEventListener("click", function () {
 
 function actualizarCaso() {
     const etapa = casos[casoActual].etapas[etapaActual];
-    let  message =casos[casoActual].paciente +  etapa.infoAdicional ; 
+    let message = `${casos[casoActual].paciente} 
+    <hr style="border: 1px solid black; margin: 5px;"> 
+    <span style="font-weight: bold; color: green;">${casoActual}</span> 
+    <hr style="border: 1px solid black; margin: 5px;">
+    <span style="font-style: italic; color: gray;">${etapa.infoAdicional}</span>`;
+
     updateParameters({
         "bp-value": etapa.bp,
         "spo2-value": etapa.spo2,

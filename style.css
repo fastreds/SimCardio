@@ -37,10 +37,10 @@ body {
     padding: 10px;
     border-radius: 15px;
     text-align: center;
-    font-size: 1.2em;
+    font-size: 1em;
     cursor: grab;
     box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
-    position: relative;
+    position: sticky;
 }
 
 p {
@@ -93,10 +93,10 @@ button:hover { background-color: darkgreen; }
     }
 }
 
-#ecg-container { border: 3px solid red; width: 550px; }
+#ecg-container { border: 3px solid red; width: 650px; height: 300px; }
 #blood-pressure-container { border: 3px solid blue; }
 #spo2-container { border: 3px solid green; }
 #capnometry-container { border: 3px solid yellow; }
 #heart-rate-container { border: 3px solid orange; }
 #glucose-container { border: 3px solid purple; }
-#history-container { border: 3px solid white; width: 600px; }
+#history-container { border: 3px solid white; font-size: large; width: 600px; }

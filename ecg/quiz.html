@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Ritmos Cardíacos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script defer src="ritmos.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body class="bg-gray-100 p-4 text-center">
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4">Identifica el Ritmo Cardíaco</h1>
+        <canvas id="ecgChart"></canvas>
+        <div id="options" class="grid grid-cols-2 gap-4 mt-4"></div>
+        <button id="next" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Siguiente</button>
+        <div id="feedback" class="mt-4 text-lg font-semibold"></div>
+    </div>
+</body>
+</html>

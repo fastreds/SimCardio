@@ -1,51 +1,3 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const ctx = document.getElementById("ecg-chart").getContext("2d");
-    let hr = 75; // Frecuencia cardíaca inicial
-    let ecgChart = null;
-    let ecgData = Array(500).fill(0); // Datos iniciales del ECG
-    const maxDataPoints = 500; // Máximo de puntos en el gráfico
-    let updateInterval = null; // Intervalo de actualización
-    let currentInterval = 1000 / hr; // Intervalo en milisegundos (cada latido debe ser 1 segundo)
-    const paperSpeed = 25; // Velocidad del papel en mm/s (típico para 25 mm/s)
-
-    let rhythmType = 'ASISTOLIA'; // Ritmo inicial
-    window.setRhythm = setRhythm;
-
-    // Crear el gráfico
-    // Crear el gráfico ECG 
-    function createECGChart() {
-        if (ecgChart !== null) {
-            ecgChart.destroy();
-        }
-
-        ecgChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                labels: Array(maxDataPoints).fill(""),
-                datasets: [{
-                    label: "ECG",
-                    borderColor: "green",
-                    borderWidth: 2,
-                    fill: false,
-                    data: ecgData,
-                    tension: 0.2, // Suaviza la línea para una transición más natural
-                }],
-            },
-            options: {
-                animation: { duration: 0 }, // Deshabilitar animaciones para mejor control
-                responsive: true,
-                elements: {
-                    line: { borderWidth: 2 },
-                    point: { radius: 0 }, // Sin puntos individuales
-                },
-                scales: {
-                    x: { display: false },
-                    y: { display: false, min: -2, max: 2 }, // Se amplió el rango para evitar recortes
-                },
-            },
-        });
-    }
-
     // Generar un solo punto de datos para el ECG basado en el ritmo
     function generateECGPoint(bpm, index) {
         let t;
@@ -91,7 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (t < duracionOndaP + segmentoPR + 0.04) value = 0.8; // Pico R
                 else if (t < duracionOndaP + segmentoPR + complejoQRS) value = 0.15; // Onda S
                 else if (t < duracionOndaP + segmentoPR + complejoQRS + intervaloQT) value = 0.10 * Math.sin(t * Math.PI * 10); // Onda t
-                break;
 
             case 'BRADI_SINUSAL': // BRADICARDIA  Sinusal
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((20 / bpm) * 250);
@@ -257,51 +208,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         }
-
-
-
-
         return value;
 
     }
-
-    let index = 0; // Control de avance de la onda
-
-    // Actualizar el gráfico con desplazamiento
-    function updateECG() {
-        ecgData.shift();
-        ecgData.push(generateECGPoint(hr, index));
-        index++;
-
-        ecgChart.data.datasets[0].data = ecgData;
-        ecgChart.update();
-    }
-
-    // Iniciar el ECG con movimiento continuo
-    function startECG() {
-        if (updateInterval) clearInterval(updateInterval);
-
-        currentInterval = 1000 / hr;
-        updateInterval = setInterval(updateECG, currentInterval);
-    }
-
-    // Inicializar el gráfico y comenzar la simulación
-    createECGChart();
-    startECG();
-
-
-
-
-    function setRhythm(type, Newbpm) {
-        rhythmType = type;
-        index = 0;
-
-        //nueva frecuencia cardiaca
-        bpm = Newbpm;
-        hr = bpm;
-        startECG();
-    }
-
-
-
-});

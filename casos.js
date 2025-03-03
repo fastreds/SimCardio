@@ -1,20 +1,20 @@
 const casos = [
-    {
+    /*{
         paciente: "Hombre, 98 años, insuficiencia cardíaca avanzada. Encontrado inconsciente.",
         etapas: [
-            {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "60", glucose: "--", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "40", glucose: "--", ritmo: "BLOQUE_AV_MOBITZ_1" },
             {infoAdicional: "No respuesta tras RCP y adrenalina", bp: "--", spo2: "--", capno: "--", hr: "48", glucose: "--", ritmo: "BRADI_SINUSAL" },
             {infoAdicional: "Se aplica adrenalina, no hay respuesta", bp: "--", spo2: "--", capno: "--", hr: "60", glucose: "--", ritmo: "BAV1" }
         ]
-    },
+    },*/
     {
         paciente: "Hombre, 58 años, sobrepeso, hipertensión, tabaquismo. Dolor torácico opresivo irradiado a brazo izquierdo, sudoración, náuseas.",
         etapas: [
-            {infoAdicional: ""},
-            {infoAdicional: "  - El paciente impresiona mal aspecto", bp: "145/90", spo2: "96", capno: "55", hr: "98", glucose: "95", ritmo: "SINUSAL" },
-            {infoAdicional: "El paciente impresiona mal aspecto, ha desaturado", bp: "130/85", spo2: "44", capno: "55", hr: "180", glucose: "95", ritmo: "TSV" },
-            {infoAdicional: " -------  Paciente Inconsciente  ----------", bp: "70/30", spo2: "88", capno: "55", hr: "120", glucose: "95", ritmo: "FV" },
-            {infoAdicional: "Paciente genera ruidos, parece que su nivel de conciencia ha mejorado", bp: "125/80", spo2: "98", capno: "55", hr: "80", glucose: "95", ritmo: "sinusal" }
+            {infoAdicional: "Monitor sin Conectar"},
+            {infoAdicional: "  - El paciente impresiona mal aspecto general.", bp: "145/90", spo2: "96", capno: "55", hr: "48", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Cuando estaban tomando un electrocardiogramas de 12 derivaciones, el paciente no responde, ha desaturado", bp: "70/45", spo2: "44", capno: "55", hr: "180", glucose: "95", ritmo: "TV" },
+            {infoAdicional: "Paciente Inconsciente", bp: "0/0", spo2: "0", capno: "--", hr: "120", glucose: "95", ritmo: "FV" },
+            {infoAdicional: "Paciente genera ruidos, parece que su nivel de conciencia ha mejorado", bp: "95/80", spo2: "98", capno: "55", hr: "80", glucose: "95", ritmo: "IAM" }
         ]
     },
     {

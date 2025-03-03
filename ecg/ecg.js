@@ -239,9 +239,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
 
                 // Definimos las duraciones ajustadas dinámicamente
-                duracionOndaP = 0.08;
+                duracionOndaP = 0.04;
                 segmentoPR = latidoBloqueado ? 0 : prProlongado; // Si hay bloqueo, PR es infinito
-                complejoQRS = latidoBloqueado ? 0 : 0.035;
+                complejoQRS = latidoBloqueado ? 0 : 0.028;
                 intervaloQT = latidoBloqueado ? 0 : 0.1;
 
                 // Generación del ECG

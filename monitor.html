@@ -17,30 +17,33 @@
 
        
         <button id="iniciar_caso-btn">iniciar caso</button>
-        <button id="paso_caso-btn">Avanzar</button>
+        <button id="paso_caso-btn">Avanzar</button> 
+         <div id="time-container" ><p></p><p></p></div>
        
     </div>
     <br><br>
-    <div id="history-container" class="container"> <h3>Historia</h3>  </div>
+    <div id="history-container" class="container"> </div>
     <div class="grid-container">
    
-        <div id="blood-pressure-container" class="container"> <h3>Presión Arterial</h3> <p id="bp-value">120/80 </p> </div>
-        <div id="spo2-container" class="container"> <h3>Oximetría SpO2</h3> <p id="spo2-value">98% </p> </div>
+        <div id="blood-pressure-container" class="container"> <h3>Presión Arterial   </h3> <p id="bp-value">120/80 </p> </div>
+        <div id="spo2-container" class="container"> <h3>Oximetría SpO2   </h3> <p id="spo2-value">98% </p> </div>
         <div id="capnometry-container" class="container"> <h3>Capnometría mmHg</h3> <p id="capno-value">35 </p> </div>
         <div id="heart-rate-container" class="container"> <h3>Frecuencia Cardíaca</h3> <p id="hr-value">75 </p> </div>
         <div id="glucose-container" class="container"> <h3>Glicemia mg/dL</h3> <p id="glucose-value">90 </p> </div>
         <div id="ecg-container" class="container">  <canvas id="ecg-chart"></canvas> </div>
+       
         
       
 
     </div>
 
 
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="timer.js"></script>
     <script src="ecg/ecg.js"></script>
     <script src="script.js"></script>
     <script src="casos.js"></script>
+
 
 </body>
 </html>

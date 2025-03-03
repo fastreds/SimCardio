@@ -34,7 +34,7 @@ body {
 
 .container {
     background-color: #222;
-    padding: 10px;
+    padding: 5px;
     border-radius: 15px;
     text-align: center;
     font-size: 1em;
@@ -45,13 +45,13 @@ body {
 
 p {
     font-weight: bold;
-    width: 90%;
-    height: 30%;
+    width: 80%;
+    height: 25%;
     font-size: 1.8em; 
     background-color: black;
     display: inline-block;
-    padding: 10px;
-    border-radius: 9px;
+    padding: 5px;
+    border-radius: 7px;
     cursor: pointer;
 }
 
@@ -97,6 +97,7 @@ button:hover { background-color: darkgreen; }
 #blood-pressure-container { border: 3px solid blue; }
 #spo2-container { border: 3px solid green; }
 #capnometry-container { border: 3px solid yellow; }
-#heart-rate-container { border: 3px solid orange; }
+#heart-rate-container { border: 3px solid  red; }
 #glucose-container { border: 3px solid purple; }
 #history-container { border: 3px solid white; font-size: large; width: 600px; }
+#time-container { font-size: 8px; width: 75px; height: 30px; }

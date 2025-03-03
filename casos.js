@@ -8,22 +8,23 @@ const casos = [
         ]
     },*/
     {
-        paciente: "Hombre, 58 años, sobrepeso, hipertensión, tabaquismo. Dolor torácico opresivo irradiado a brazo izquierdo, sudoración, náuseas.",
+        paciente: "Funcionario LANAME en OBS, 58 años, sobrepeso, hipertensión, tabaquismo. Dolor torácico opresivo irradiado a brazo izquierdo, sudoración, náuseas.",
         etapas: [
             {infoAdicional: "Monitor sin Conectar"},
-            {infoAdicional: "  - El paciente impresiona mal aspecto general.", bp: "145/90", spo2: "96", capno: "55", hr: "48", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "El paciente impresiona mal aspecto general.", bp: "145/90", spo2: "96", capno: "55", hr: "48", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
             {infoAdicional: "Cuando estaban tomando un electrocardiogramas de 12 derivaciones, el paciente no responde, ha desaturado", bp: "70/45", spo2: "44", capno: "55", hr: "180", glucose: "95", ritmo: "TV" },
             {infoAdicional: "Paciente Inconsciente", bp: "0/0", spo2: "0", capno: "--", hr: "120", glucose: "95", ritmo: "FV" },
+            {infoAdicional: "Paciente Inconsciente", bp: "0/0", spo2: "0", capno: "--", hr: "155", glucose: "-", ritmo: "TV" },
             {infoAdicional: "Paciente genera ruidos, parece que su nivel de conciencia ha mejorado", bp: "95/80", spo2: "98", capno: "55", hr: "80", glucose: "95", ritmo: "IAM" }
         ]
     },
     {
-        paciente: "Hombre, 45 años, diabético tipo 2, colapsa súbitamente.",
+        paciente: "Cancha de Futbol, Hombre, 45 años, diabético tipo 2, colapsa súbitamente. us es parte del equipo de trabajo de una ambulancia",
         etapas: [
-            {infoAdicional: ""},
-            {infoAdicional: "Colapso súbito en estacionamiento", bp: "--", spo2: "--", capno: "--", hr: "190", glucose: "105", ritmo: "TVSP" },
-            {infoAdicional: "Se aplica descarga con DEA", bp: "90/60", spo2: "92", capno: "--", hr: "50", glucose: "105", ritmo: "bradicardia" },
-            {infoAdicional: "Paciente comienza a reaccionar", bp: "120/85", spo2: "96", capno: "--", hr: "75", glucose: "105", ritmo: "sinusal" }
+            {infoAdicional: "Monitor sin Conectar"},
+            {infoAdicional: "Colapso súbito en estacionamiento", bp: "--", spo2: "--", capno: "--", hr: "190", glucose: "--", ritmo: "FV" },
+            {infoAdicional: "Se aplica descarga con DEA", bp: "75/50", spo2: "82", capno: "--", hr: "50", glucose: "105", ritmo: "BRADI_SINUSAL" },
+            {infoAdicional: "Paciente comienza a reaccionar", bp: "120/85", spo2: "96", capno: "--", hr: "75", glucose: "105", ritmo: "SINUSAL" }
         ]
     },
     {

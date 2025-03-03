@@ -1,12 +1,13 @@
+// clase del cronometro 
+const cronometro = new Cronometro("time-container");
+
 function getRandomValue(base, range) {
     return Math.floor(base + (Math.random() * (range * 2 + 1)) - range);
 }
 
 
 
-/// valores iniciales para monitor sin conetar
-
-// Llamada con algunos valores vacíos
+/// valores iniciales para monitor sin conectar
 updateParameters({
 
 });
@@ -56,7 +57,7 @@ snap: {
     targets: [
         interact.snappers.grid({ x: 25, y: 25 }) // "pegado" a una cuadrícula de 25px   
     ],
-    range: 30, // Distancia de atracción
+    range: 25, // Distancia de atracción
     relativePoints: [{ x: 0.25, y: 0.25 }]
 }
 });
@@ -66,6 +67,7 @@ function resetPositions() {
         el.style.transform = 'translate(0, 0)';
         el.setAttribute('data-x', 0);
         el.setAttribute('data-y', 0);
+     
     });
 }
 
@@ -114,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     casos.forEach((caso, index) => {
         let option = document.createElement("option");
         option.value = index;
-        option.textContent = `Caso ${caso.paciente.split(" ",4)}`;
+        option.textContent = `${caso.paciente.split(",",2)}`;
         selectCaso.appendChild(option);
     });
 });
@@ -128,14 +130,18 @@ document.getElementById("caso-select").addEventListener("change", function () {
 document.getElementById("iniciar_caso-btn").addEventListener("click", function () {
     etapaActual = 0;
     actualizarCaso();
+    cronometro.reset();
+    cronometro.start();
 });
 
 document.getElementById("paso_caso-btn").addEventListener("click", function () {
     if (etapaActual < casos[casoActual].etapas.length - 1) {
         etapaActual++;
         actualizarCaso();
+        cronometro.mark();
     } else {
         alert("Caso finalizado");
+        cronometro.pause();
     }
 });
 

@@ -127,10 +127,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 t = (index % Math.round((paperSpeed / bpm) * 250)) / Math.round((60 / bpm) * 250);
                 if (t < 0.05) value = 0.05; // Onda P casi inexistente
-                else if (t < 0.2) value = 0.35 * Math.sin(t * Math.PI * 10); // Pico QRS
-                else if (t < 0.24) value = -0.8 * Math.sin(t * Math.PI * 5); // Onda S
-                else if (t < 0.25) value = 0.01; // Onda T pequeña o inexistente
-                else if (t < 0.30) value = 0.05 * Math.sin((t - 0.25) * Math.PI * 4); // Onda T
+                else if (t < 0.2) value = 0.7 * Math.sin(t * Math.PI * 10); // Pico QRS
+                else if (t < 0.35) value = -0.8 * Math.sin(t * Math.PI * 5); // Onda S
+                else if (t < 0.45) value = 0.01; // Onda T pequeña o inexistente
+                else if (t < 0.40) value = 0.05 * Math.sin((t - 0.25) * Math.PI * 4); // Onda T
                 break;
 
             case 'FV': // Fibrilación Ventricular (Ritmo desorganizado)

@@ -1,17 +1,20 @@
-body { 
-    background-color: black;
-    color: white;
+/* ===== Estilos base ===== */
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     overflow: hidden;
-    padding-top: 60px;
+    padding-top: 70px;
 }
 
+/* ===== Barra superior ===== */
 .top-bar {
     width: 100%;
-    background: #333;
+    background: #222;
     padding: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -23,42 +26,48 @@ body {
     z-index: 1000;
 }
 
+/* ===== Contenedores generales ===== */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
     width: 90%;
-    max-width: 800px;
+    max-width: 900px;
 }
 
 .container {
-    background-color: #222;
-    padding: 5px;
-    border-radius: 15px;
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
     text-align: center;
     font-size: 1em;
     cursor: grab;
-    box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
-    position: sticky;
+    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
 }
 
+h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+/* ===== Estilo de los valores ===== */
 p {
     font-weight: bold;
-    width: 80%;
-    height: 25%;
-    font-size: 1.8em; 
-    background-color: black;
+    font-size: 1.6em;
+    background-color: #000;
     display: inline-block;
-    padding: 5px;
-    border-radius: 7px;
+    padding: 8px 12px;
+    border-radius: 5px;
     cursor: pointer;
+    margin: 5px 0;
 }
 
+/* ===== Botones ===== */
 button {
-    padding: 10px;
-    background-color: green;
-    color: white;
+    padding: 10px 15px;
+    background-color: #008000;
+    color: #fff;
     border: none;
     cursor: pointer;
     font-size: 1em;
@@ -66,15 +75,41 @@ button {
     transition: background 0.3s;
 }
 
-button:hover { background-color: darkgreen; }
+button:hover {
+    background-color: #006400;
+}
 
+/* ===== Contenedores de signos vitales ===== */
+#ecg-container {
+    border: 3px solid red;
+    width: 500px;
+    height: 250px;
+}
+
+#blood-pressure-container { border: 3px solid blue; }
+#spo2-container { border: 3px solid #0d71ac; }
+#respiratoria-container { border: 3px solid green; }
+#capnometry-container { border: 3px solid yellow; }
+#heart-rate-container { border: 3px solid red; }
+#glucose-container { border: 3px solid purple; }
+
+#time-container { border: 3px solid purple; font-size: x-small;} 
+
+
+/* ===== Contenedor de historial ===== */
+#history-container {
+    border: 3px solid white;
+    font-size: large;
+    width: 400px;
+}
+
+/* ===== Responsive Design ===== */
 @media (max-width: 768px) {
     .grid-container {
         grid-template-columns: repeat(2, 1fr);
     }
-
     p {
-        font-size: 1.5em;
+        font-size: 1.4em;
     }
 }
 
@@ -82,22 +117,11 @@ button:hover { background-color: darkgreen; }
     .grid-container {
         grid-template-columns: 1fr;
     }
-
     .top-bar {
         flex-direction: column;
-        align-items: center;
+        align-items: left;
     }
-
     p {
         font-size: 1.2em;
     }
 }
-
-#ecg-container { border: 3px solid red; width: 650px; height: 300px; }
-#blood-pressure-container { border: 3px solid blue; }
-#spo2-container { border: 3px solid green; }
-#capnometry-container { border: 3px solid yellow; }
-#heart-rate-container { border: 3px solid  red; }
-#glucose-container { border: 3px solid purple; }
-#history-container { border: 3px solid white; font-size: large; width: 600px; }
-#time-container { font-size: 8px; width: 75px; height: 30px; }

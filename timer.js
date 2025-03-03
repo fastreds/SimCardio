@@ -14,7 +14,7 @@ class Cronometro {
         let min = Math.floor(this.seconds / 60);
         let sec = this.seconds % 60;
         this.timeDisplay.textContent = `${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
-        this.marksDisplay.innerHTML = this.marks.length > 0 ? `<ul>` + this.marks.map(mark => `<li>${mark}</li>`).join('') + `</ul>` : "-";
+        this.marksDisplay.innerHTML = this.marks.length > 0 ? "<div>" + this.marks.map(mark => `${mark} - `).join('') + `</div>` : "-";
     }
 
     start() {

@@ -140,8 +140,11 @@ document.getElementById("paso_caso-btn").addEventListener("click", function () {
         actualizarCaso();
         cronometro.mark();
     } else {
-        alert("Caso finalizado");
+        //alert("Caso finalizado");
         cronometro.pause();
+        updateParameters({"history-container": "Caso Finalizado"});
+        ritmo = "ASISTOLIA";
+        setRhythm(ritmo,0);
     }
 });
 

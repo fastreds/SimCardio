@@ -8,13 +8,14 @@ const casos = [
         ]
     },*/
     {
-        paciente: "Funcionario LANAME en OBS, 58 años, sobrepeso, hipertensión, tabaquismo. Dolor torácico opresivo irradiado a brazo izquierdo, sudoración, náuseas.",
+        paciente: "CM - Funcionaria LANAMME en OBS, 58 años, indica sentir  dolor de pecho, \"un poquito de falta de aire\". 20 minutos de evolución.",
         etapas: [
-            {infoAdicional: "Monitor sin Conectar"},
-            {infoAdicional: "El paciente impresiona mal aspecto general.", bp: "75/55", spo2: "85", capno: "40", hr: "48", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "La paciente luce diaforética."},
+            {infoAdicional: "El paciente impresiona mal aspecto general. La paciente está afebril, ", bp: "75/45", spo2: "85", capno: "0", hr: "32", glucose: "95", ritmo: "BRADI_SINUSAL" },
+            {infoAdicional: "Han cosiderado usar atropina ", bp: "75/45", spo2: "92", capno: "41", hr: "45", glucose: "95", ritmo: "BRADI_SINUSAL" },
             {infoAdicional: "Cuando estaban tomando un electrocardiogramas de 12 derivaciones, el paciente no responde, ha desaturado", bp: "--", spo2: "--", capno: "--", hr: "180", glucose: "95", ritmo: "TV" },
-            {infoAdicional: "Paciente Inconsciente", bp: "0/0", spo2: "0", capno: "--", hr: "120", glucose: "95", ritmo: "FV" },
-            {infoAdicional: "Paciente Inconsciente", bp: "0/0", spo2: "0", capno: "--", hr: "180", glucose: "-", ritmo: "TV" },
+            {infoAdicional: "Paciente Inconsciente", bp: "0/0", spo2: "52", capno: "45", hr: "85", glucose: "00", ritmo: "SINUSAL" },
+            {infoAdicional: "Paciente Inconsciente", bp: "75/60", spo2: "82", capno: "40", hr: "110", glucose: "-", ritmo: "SINUSAL" },
             {infoAdicional: "Paciente genera ruidos, parece que su nivel de conciencia ha mejorado", bp: "95/80", spo2: "98", capno: "55", hr: "80", glucose: "95", ritmo: "IAM" }
         ]
     },
@@ -28,28 +29,39 @@ const casos = [
         ]
     },
     {
-        paciente: "Mujer, 72 años, insuficiencia cardíaca, marcapasos sin revisión reciente. Mareos y fatiga.",
+        paciente: "BS - Mujer, 42 años, Hipertensa tratada con atenolol, sin revisión reciente. Mareos y fatiga Le refiere a la enferemera en el triage que le costó lenvantarse del inodoro.",
         etapas: [
-            {infoAdicional: ""},
-            {infoAdicional: "Paciente con mareos y fatiga", bp: "100/60", spo2: "97", capno: "--", hr: "38", glucose: "110", ritmo: "BAV3" },
-            {infoAdicional: "Paciente con alteración del estado de conciencia", bp: "85/50", spo2: "95", capno: "--", hr: "30", glucose: "110", ritmo: "BAV3" },
-            {infoAdicional: "Se coloca marcapasos transcutáneo", bp: "120/75", spo2: "98", capno: "--", hr: "70", glucose: "110", ritmo: "marcapasos" }
+            {infoAdicional: "No tiene buen aspecto"},
+            {infoAdicional: "Paciente con mareos y fatiga", bp: "75/45", spo2: "85", capno: "36", hr: "32", glucose: "92", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Paciente con mareos y fatiga", bp: "70/35", spo2: "95", capno: "36", hr: "40", glucose: "n/d", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Paciente con mareos y fatiga", bp: "60/35", spo2: "87", capno: "36", hr: "40", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Paciente con mareos y fatiga", bp: "65/35", spo2: "87", capno: "36", hr: "40", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Paciente con mareos y fatiga", bp: "00/00", spo2: "87", capno: "36", hr: "40", glucose: "95", ritmo: "BLOQUE_AV_MOBITZ_1" },
+            {infoAdicional: "Paciente con alteración del estado de conciencia", bp: "0/0", spo2: "0", capno: "--", hr: "0", glucose: "0", ritmo: "ASISTOLIA" },
+            {infoAdicional: "Paciente con mareos y fatiga", bp: "64/35", spo2: "87", capno: "36", hr: "75", glucose: "95", ritmo: "BRADI_SINUSAL" }, // MARCAPASO 
+            {infoAdicional: "Se coloca marcapasos transcutáneo", bp: "120/75", spo2: "98", capno: "--", hr: "65", glucose: "110", ritmo: "SINUSAL" }
         ]
     },
     {
-        paciente: "Hombre, 35 años, Deportista. Refiere Palpitaciones y disnea leve.",
+        paciente: "T  Hombre, 65 años, Paciente ingresda a recepción refiere dolor torácico, y cae subitamente. los compañeros lo llevan a enfermeria.",
         etapas: [
             {infoAdicional: "Monitor sin Conectar"},
-            {infoAdicional: "Paciente con palpitaciones rápidas", bp: "70/55", spo2: "94", capno: "--", hr: "140", glucose: "120", ritmo: "FA" },
-            {infoAdicional: "Frecuencia cardíaca controlada con betabloqueadores", bp: "135/80", spo2: "96", capno: "--", hr: "75", glucose: "120", ritmo: "FA" }
+            {infoAdicional: "Paciente con palpitaciones rápidas", bp: "0/0", spo2: "0", capno: "--", hr: "140", glucose: "0", ritmo: "FV" },
+            {infoAdicional: "Paciente con palpitaciones rápidas", bp: "0/0", spo2: "0", capno: "--", hr: "140", glucose: "0", ritmo: "TV" },
+            {infoAdicional: "Paciente con palpitaciones rápidas", bp: "0/0", spo2: "0", capno: "--", hr: "140", glucose: "0", ritmo: "FV" },
+            {infoAdicional: "Paciente con palpitaciones rápidas", bp: "0/0", spo2: "0", capno: "--", hr: "140", glucose: "0", ritmo: "TV" },
+            {infoAdicional: "Frecuencia cardíaca controlada con betabloqueadores", bp: "135/80", spo2: "96", capno: "--", hr: "101", glucose: "120", ritmo: "SINUSAL" }
         ]
     },
     {
-        paciente: "Hombre, 78 años, insuficiencia cardíaca avanzada. Encontrado inconsciente.",
+        paciente: "AESP Hombre, 52 años. Encontrado inconsciente  en farmacia.",
         etapas: [
             {infoAdicional: "Monitor sin Conectar"},
-            {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "asistolia" },
-            {infoAdicional: "No respuesta tras RCP y adrenalina", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "asistolia" }
+            {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "ASISTOLIA" },
+            {infoAdicional: "Lo estan estudiando por insuficiencia Renal", bp: "--", spo2: "--", capno: "--", hr: "0", glucose: "--", ritmo: "ASISTOLIA" },
+            {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "89", glucose: "--", ritmo: "SINUSAL" },
+            {infoAdicional: "Paciente encontrado sin respuesta", bp: "--", spo2: "--", capno: "--", hr: "79", glucose: "--", ritmo: "SINUSAL" },
+            {infoAdicional: "Paciente encontrado sin respuesta", bp: "145/70", spo2: "97", capno: "--", hr: "115", glucose: "--", ritmo: "SINUSAL" },
         ]
     }
 ];

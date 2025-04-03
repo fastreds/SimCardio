@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variación del Costo Mensual y Horas de Servicio</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        canvas {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #f9f9f9;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button {
+            margin: 10px;
+            padding: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>Variación del Costo Mensual y Horas de Servicio</h2>
+    <p>Este análisis muestra la evolución del costo mensual de un servicio y las horas de servicio brindadas, diferenciando entre servicios profesionales y de planilla.</p>
+    
+    <div class="chart-container">
+        <canvas id="costChart"></canvas>
+        <canvas id="hoursChart"></canvas>
+    </div>
+    
+    <button onclick="addData()">Agregar Año</button>
+    <button onclick="removeData()">Eliminar Último Año</button>
+    
+    <h3>Datos de Costos y Horas de Servicio</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Año</th>
+                <th>Costo Mensual (CRC)</th>
+                <th>Horas Totales por Día</th>
+                <th>Horas Servicios Profesionales</th>
+            </tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+    </table>
+    
+    <script>
+        const data = {
+            labels: [2019,2021, 2022, 2023, 2024],
+            costs: [4870320,4091000, 3591000, 2253000, 2362000],
+            totalHours: [24,24, 24, 16, 16],
+            professionalHours: [0,4, 8, 16, 16]
+        };
+
+        function updateTable() {
+            let tableBody = document.getElementById("dataTable");
+            tableBody.innerHTML = "";
+            for (let i = 0; i < data.labels.length; i++) {
+                let row = `<tr>
+                    <td>${data.labels[i]}</td>
+                    <td>${data.costs[i].toLocaleString("es-CR")} CRC</td>
+                    <td>${data.totalHours[i]}</td>
+                    <td>${data.professionalHours[i]}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            }
+            costChart.update();
+            hoursChart.update();
+        }
+
+        const ctxCost = document.getElementById("costChart").getContext("2d");
+        const costChart = new Chart(ctxCost, {
+            type: "line",
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: "Costo Mensual (CRC)",
+                        data: data.costs,
+                        borderColor: "blue",
+                        backgroundColor: "rgba(0, 0, 255, 0.1)",
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        const ctxHours = document.getElementById("hoursChart").getContext("2d");
+        const hoursChart = new Chart(ctxHours, {
+            type: "line",
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: "Horas Totales por Día",
+                        data: data.totalHours,
+                        borderColor: "green",
+                        backgroundColor: "rgba(0, 255, 0, 0.1)",
+                        fill: true,
+                        tension: 0.3
+                    },
+                    {
+                        label: "Horas Servicios Profesionales",
+                        data: data.professionalHours,
+                        borderColor: "red",
+                        backgroundColor: "rgba(255, 0, 0, 0.1)",
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true
+            }
+        });
+
+        function addData() {
+            let newYear = data.labels[data.labels.length - 1] + 1;
+            let newCost = prompt("Ingrese el costo mensual para " + newYear);
+            let newTotalHours = prompt("Ingrese las horas totales por día para " + newYear);
+            let newProfessionalHours = prompt("Ingrese las horas de servicios profesionales para " + newYear);
+            
+            if (newCost && newTotalHours && newProfessionalHours) {
+                data.labels.push(newYear);
+                data.costs.push(Number(newCost));
+                data.totalHours.push(Number(newTotalHours));
+                data.professionalHours.push(Number(newProfessionalHours));
+                updateTable();
+            }
+        }
+
+        function removeData() {
+            if (data.labels.length > 1) {
+                data.labels.pop();
+                data.costs.pop();
+                data.totalHours.pop();
+                data.professionalHours.pop();
+                updateTable();
+            }
+        }
+
+        updateTable();
+    </script>
+</body>
+</html>

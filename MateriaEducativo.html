@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Título general de la aplicación -->
+    <title>Infografías de Emergencias</title>
+    
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Carga de la fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6; /* Un gris azulado muy claro */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* esquinas redondeadas */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden; /* Para que las esquinas redondeadas se apliquen bien */
+        }
+        .card-header {
+            background-color: #005a9c; /* Azul médico oscuro */
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        /* Color de cabecera para Oximetría (NUEVO) */
+        .card-header-oximetria {
+            background-color: #0284c7; /* Celeste/Azul claro */
+        }
+        /* Color de cabecera para Naloxona */
+        .card-header-naloxona {
+            background-color: #c94a00; /* Naranja oscuro */
+        }
+        /* Color de cabecera para Flumazenil */
+        .card-header-flumazenil {
+            background-color: #00695c; /* Verde oscuro */
+        }
+        /* Color de cabecera para Adenosina */
+        .card-header-adenosina {
+            background-color: #701a75; /* Púrpura oscuro */
+        }
+        /* Color de cabecera para Ketamina */
+        .card-header-ketamina {
+            background-color: #2d3748; /* Gris oscuro */
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-body-gray {
+            background-color: #f9fafb; /* Gris claro para secciones alternas */
+            padding: 1.5rem;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+        }
+
+        /* --- Estilos de Animación (Capnografía) --- */
+        .capno-wave {
+            stroke-dasharray: 600; 
+            stroke-dashoffset: 600;
+            animation: drawWave 8s linear infinite;
+        }
+        .breathing-indicator {
+            transform-origin: center;
+            animation: breatheOutIn 8s ease-in-out infinite;
+        }
+        .dot-indicator {
+            animation: moveDot 8s linear infinite;
+        }
+        @keyframes drawWave {
+            0% { stroke-dashoffset: 600; } 10% { stroke-dashoffset: 600; } 25% { stroke-dashoffset: 400; } 50% { stroke-dashoffset: 200; } 75% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; }
+        }
+        @keyframes breatheOutIn {
+            0% { transform: scale(1); } 5% { transform: scale(1.1); } 10% { transform: scale(1); } 20% { transform: scale(0.9); } 40% { transform: scale(0.8); } 60% { transform: scale(0.9); } 70% { transform: scale(1); } 80% { transform: scale(1.1); } 100% { transform: scale(1); }
+        }
+        @keyframes moveDot {
+            0% { transform: translate(10px, 85px); } 10% { transform: translate(10px, 85px); } 25% { transform: translate(50px, 40px); } 50% { transform: translate(130px, 40px); } 75% { transform: translate(140px, 85px); } 100% { transform: translate(10px, 85px); }
+        }
+        .animation-paused .capno-wave,
+        .animation-paused .breathing-indicator,
+        .animation-paused .dot-indicator {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="pt-16"> <!-- Padding superior para dejar espacio al menú fijo -->
+
+    <!-- ===== MENÚ DE NAVEGACIÓN ===== -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white shadow-lg z-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex justify-start space-x-1">
+                <!-- Botón de Navegación: Oximetría (NUEVO) -->
+                <button id="btn-oximetria" 
+                        class="nav-button px-3 py-4 font-medium text-sm transition-colors duration-200" 
+                        onclick="showPage('page-oximetria')">
+                    Oximetría
+                </button>
+                <!-- Botón de Navegación: Capnografía -->
+                <button id="btn-capnografia" 
+                        class="nav-button px-3 py-4 font-medium text-sm transition-colors duration-200" 
+                        onclick="showPage('page-capnografia')">
+                    Capnografía
+                </button>
+                <!-- Botón de Navegación: Naloxona -->
+                <button id="btn-naloxona" 
+                        class="nav-button px-3 py-4 font-medium text-sm transition-colors duration-200" 
+                        onclick="showPage('page-naloxona')">
+                    Naloxona
+                </button>
+                <!-- Botón de Navegación: Flumazenil -->
+                <button id="btn-flumazenil" 
+                        class="nav-button px-3 py-4 font-medium text-sm transition-colors duration-200" 
+                        onclick="showPage('page-flumazenil')">
+                    Flumazenil
+                </button>
+                <!-- Botón de Navegación: Adenosina -->
+                <button id="btn-adenosina" 
+                        class="nav-button px-3 py-4 font-medium text-sm transition-colors duration-200" 
+                        onclick="showPage('page-adenosina')">
+                    Adenosina
+                </button>
+                <!-- Botón de Navegación: Ketamina -->
+                <button id="btn-ketamina" 
+                        class="nav-button px-3 py-4 font-medium text-sm transition-colors duration-200" 
+                        onclick="showPage('page-ketamina')">
+                    Ketamina
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== CONTENEDOR PRINCIPAL DE PÁGINAS ===== -->
+    <main class="max-w-4xl mx-auto p-4 md:p-8">
+
+        <!-- ===== PÁGINA 0: OXIMETRÍA (NUEVA) ===== -->
+        <div id="page-oximetria" class="page-content hidden">
+            <!-- Título Principal -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#0284c7]">
+                    Infografía: Oximetría de Pulso (SpO₂)
+                </h1>
+                <p class="text-xl text-gray-600 mt-2">Saturación de Oxígeno y Onda de Pletismografía</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. ¿Qué es y Qué Mide? -->
+                <div class="card md:col-span-2">
+                    <div class="card-header card-header-oximetria">
+                        ¿Qué es y Qué Mide?
+                    </div>
+                    <div class="card-body space-y-4">
+                        <p class="text-lg text-gray-700">
+                            Es una herramienta <strong>no invasiva</strong> que mide la <strong>Saturación de Oxígeno (SpO₂)</strong> en la sangre arterial.
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Mecanismo de Acción:</strong> Emite luz roja e infrarroja a través de un lecho capilar (dedo, oreja). Mide cuánta luz es absorbida por la hemoglobina oxigenada vs. la desoxigenada.
+                        </p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li><strong>SpO₂ (El Número):</strong> Estima el porcentaje de hemoglobina que está "cargada" con oxígeno.</li>
+                            <li><strong>Onda de Pletismografía (La Onda):</strong> Muestra el flujo sanguíneo pulsátil, indicando la calidad de la perfusión periférica y la fiabilidad de la lectura.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Imagen Onda -->
+                <div class="card flex flex-col items-center justify-center p-4">
+                    <img src="https://placehold.co/300x200/e0f2fe/0284c7?text=Onda+de+Pletismografía" 
+                         alt="Onda de Pletismografía normal" 
+                         class="rounded-lg object-cover">
+                    <p class="text-center text-sm text-gray-600 mt-2">Onda de pletismografía normal con buena perfusión.</p>
+                </div>
+
+                <!-- 2. Interpretación de Valores (SpO₂) -->
+                <div class="card">
+                    <div class="card-header card-header-oximetria flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>Interpretación de Valores (SpO₂)</span>
+                    </div>
+                    <div class="card-body-gray">
+                        <ul class="space-y-3 text-gray-700">
+                            <li><strong class="text-green-600 text-lg">> 94%:</strong> Normal.</li>
+                            <li><strong class="text-yellow-600 text-lg">90% - 93%:</strong> Hipoxemia leve. Considerar oxígeno suplementario.</li>
+                            <li><strong class="text-orange-600 text-lg">86% - 89%:</strong> Hipoxemia moderada. Requiere oxígeno.</li>
+                            <li><strong class="text-red-600 text-lg">&le; 85%:</strong> Hipoxemia severa. Emergencia, requiere intervención inmediata.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. Interpretación de la Onda (Pletismografía) -->
+                <div class="card">
+                    <div class="card-header card-header-oximetria flex items-center space-x-2">
+                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        <span>Interpretación de la Onda</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Onda Fuerte y Rítmica:</strong> Buena perfusión periférica. El valor de SpO₂ es fiable.</li>
+                            <li><strong>Onda Débil o Plana:</strong> Mala perfusión (hipotensión, shock, frío, vasocongestión). El valor de SpO₂ NO es fiable.</li>
+                            <li><strong>Onda Irregular:</strong> Movimiento del paciente, arritmia, o mala colocación del sensor.</li>
+                         </ul>
+                    </div>
+                </div>
+                
+                <!-- 4. Limitaciones y Errores Comunes -->
+                <div class="card">
+                    <div class="card-header card-header-oximetria flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>Limitaciones y Errores</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Intoxicación por Monóxido de Carbono (CO):</strong> El oxímetro lee la Carboxihemoglobina como si fuera Oxihemoglobina. <strong class="text-red-600">Dará un valor falsamente alto (ej. 100%).</strong></li>
+                            <li><strong>Anemia Severa:</strong> El paciente puede tener 100% de SpO₂, pero tener muy poca hemoglobina para transportar oxígeno.</li>
+                            <li>Mala perfusión periférica.</li>
+                            <li>Esmalte de uñas (especialmente colores oscuros).</li>
+                            <li>Luz ambiental intensa.</li>
+                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PÁGINA 1: CAPNOGRAFÍA (Contenido existente) ===== -->
+        <div id="page-capnografia" class="page-content hidden">
+            <!-- Título Principal -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#005a9c]">
+                    Capnometría y Capnografía
+                </h1>
+                <p class="text-xl text-gray-600 mt-2">Parámetros Clave y Casos de Uso</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 1. Diferencias Clave (con animación) -->
+                <div class="card md:col-span-2">
+                    <div class="card-header">
+                        Diferencias Clave
+                    </div>
+                    <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-6 md:divide-x divide-gray-200">
+                        <!-- Capnometría -->
+                        <div class="pr-0 md:pr-4">
+                            <h2 class="text-2xl font-bold text-blue-700 mb-2">Capnometría</h2>
+                            <p class="text-gray-700">Es la <strong>medición del número</strong>.</p>
+                            <div class="mt-4 p-4 bg-blue-50 rounded-lg text-center">
+                                <span class="block text-sm text-gray-600">Valor de EtCO₂</span>
+                                <span class="block text-5xl font-bold text-blue-800">40</span>
+                                <span class="block text-lg text-gray-700">mmHg</span>
+                            </div>
+                            <p class="mt-3 text-sm text-gray-600">Muestra <strong>cuánto</strong> CO₂ hay al final de la espiración.</p>
+                        </div>
+                        <!-- Capnografía (con animación) -->
+                        <div class="pt-4 md:pt-0 md:pl-4 border-t md:border-t-0">
+                            <h2 class="text-2xl font-bold text-teal-700 mb-2">Capnografía</h2>
+                            <p class="text-gray-700">Es la <strong>representación gráfica</strong>.</p>
+                            <!-- Animación SVG -->
+                            <div class="relative w-full h-auto mt-4" id="capnogram-animation-container">
+                                <svg viewBox="0 0 200 100" class="w-full h-auto border-b-2 border-l-2 border-gray-300" role="img" aria-labelledby="title-capno-anim desc-capno-anim">
+                                    <title id="title-capno-anim">Curva de Capnograma Animada</title>
+                                    <desc id="desc-capno-anim">Gráfico animado que muestra las fases del ciclo respiratorio y los niveles de CO₂.</desc>
+                                    <text x="0" y="8" class="text-[8px] font-semibold fill-gray-600">CO₂</text>
+                                    <text x="0" y="16" class="text-[8px] font-semibold fill-gray-600">mmHg</text>
+                                    <text x="100" y="98" class="text-[8px] font-semibold fill-gray-600" text-anchor="middle">Tiempo</text>
+                                    <path id="animated-capno-wave" class="capno-wave"
+                                          d="M 10 85 L 30 85 C 40 85, 45 40, 50 40 L 130 40 C 135 40, 140 85, 140 85 L 160 85" 
+                                          stroke="#007acc" stroke-width="3" fill="none" />
+                                    <circle id="dot-on-wave" class="dot-indicator" cx="10" cy="85" r="4" fill="red" />
+                                    <circle id="breathing-circle" class="breathing-indicator" cx="180" cy="20" r="10" fill="#005a9c" opacity="0.8" />
+                                </svg>
+                                <button id="toggle-animation" class="absolute bottom-2 right-2 bg-gray-700 text-white text-xs px-2 py-1 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                                    Pausar
+                                </button>
+                            </div>
+                            <p class="mt-3 text-sm text-gray-600">Muestra <strong>cómo</strong> se exhala el CO₂ a lo largo del tiempo (la onda).</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- 2. Parámetros Clave -->
+                <div class="card md:col-span-2">
+                    <div class="card-header">
+                        Parámetros Clave Monitorizados
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="p-4 font-semibold text-gray-700">Parámetro</th>
+                                    <th class="p-4 font-semibold text-gray-700">Valor Normal</th>
+                                    <th class="p-4 font-semibold text-gray-700">Significado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50"><td class="p-4 font-semibold text-blue-800">EtCO₂</td><td class="p-4 font-bold text-green-700">35 - 45 mmHg</td><td class="p-4 text-gray-700">Refleja la ventilación alveolar y la perfusión.</td></tr>
+                                <tr class="hover:bg-gray-50"><td class="p-4 font-semibold text-blue-800">FiCO₂</td><td class="p-4 font-bold text-green-700">0 mmHg</td><td class="p-4 text-gray-700">Un valor > 0 indica re-inhalación (falla del circuito).</td></tr>
+                                <tr class="hover:bg-gray-50"><td class="p-4 font-semibold text-blue-800">Morfología</td><td class="p-4 font-bold text-green-700">Rectangular</td><td class="p-4 text-gray-700">La forma de la onda (ej. "aleta de tiburón") diagnostica patologías.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 3. Caso de Uso: Vía Aérea -->
+                <div class="card">
+                    <div class="card-header flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M16 12H8"/><path d="M12 8v8"/></svg>
+                        <span>Caso de Uso: Vía Aérea</span>
+                    </div>
+                    <div class="card-body space-y-3">
+                        <p><strong class="text-green-600">Confirmación IET:</strong> Curva presente = Tubo en tráquea.</p>
+                        <p><strong class="text-red-600">Intubación Esofágica:</strong> Línea plana = Tubo en esófago.</p>
+                        <p>Detecta apnea, desconexión o tubo obstruido (pérdida súbita de onda).</p>
+                    </div>
+                </div>
+                <!-- 4. Caso de Uso: Ventilación -->
+                <div class="card">
+                    <div class="card-header flex items-center space-x-2">
+                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <span>Caso de Uso: Ventilación</span>
+                    </div>
+                    <div class="card-body space-y-3">
+                        <p><strong class="text-red-600">Hipoventilación:</strong> EtCO₂ 🔺 (> 45 mmHg).</p>
+                        <p><strong class="text-yellow-500">Hiperventilación:</strong> EtCO₂ 🔻 (< 35 mmHg).</p>
+                        <p><strong class="text-purple-600">"Aleta de Tiburón":</strong> Bronco-espasmo (Asma, EPOC).</p>
+                    </div>
+                </div>
+                <!-- 5. Caso de Uso: Circulación -->
+                <div class="card md:col-span-2">
+                    <div class="card-header flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        <span>Caso de Uso: Circulación / Perfusión</span>
+                    </div>
+                    <div class="card-body-gray grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Calidad de RCP</h3>
+                            <p><strong class="text-green-600">Objetivo:</strong> Mantener EtCO₂ > 10-15 mmHg.</p>
+                            <p><strong class="text-red-600">EtCO₂ < 10 mmHg:</strong> Mejorar compresiones.</p>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Detección de ROSC</h3>
+                            <p><strong class="text-blue-600">Signo de ROSC:</strong> Aumento súbito del EtCO₂.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PÁGINA 2: NALOXONA (Contenido existente) ===== -->
+        <div id="page-naloxona" class="page-content hidden">
+            <!-- Título Principal -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#c94a00]">
+                    Infografía: Naloxona (Narcan®)
+                </h1>
+                <p class="text-xl text-gray-600 mt-2">El Antagonista Opioide</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. ¿Qué es y Cómo actúa? -->
+                <div class="card md:col-span-2">
+                    <div class="card-header card-header-naloxona">
+                        ¿Qué es y Cómo Actúa?
+                    </div>
+                    <div class="card-body space-y-4">
+                        <p class="text-lg text-gray-700">
+                            Es un <strong>antagonista opioide puro</strong>. Revierte rápida y temporalmente los efectos de una sobredosis de opioides, principalmente la depresión respiratoria y la sedación.
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Mecanismo de Acción:</strong> Actúa compitiendo con los opioides por los mismos sitios receptores en el cerebro (especialmente el receptor *mu*). Tiene una afinidad más alta, por lo que "desplaza" al opioide del receptor, revirtiendo su efecto.
+                        </p>
+                        <p class="text-gray-700 font-medium">
+                            No tiene efecto farmacológico si no hay opioides presentes en el sistema.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Imagen -->
+                <div class="card flex items-center justify-center p-4">
+                    <!--  -->
+                    <img src="https://placehold.co/300x200/fed7aa/c94a00?text=Naloxona+IN+4mg" 
+                         alt="Aplicador de Naloxona intranasal" 
+                         class="rounded-lg object-cover">
+                    <p class="text-center text-sm text-gray-600 mt-2">Ejemplo de aplicador intranasal (4mg).</p>
+                </div>
+
+                <!-- 2. Indicaciones -->
+                <div class="card">
+                    <div class="card-header card-header-naloxona flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        <span>Indicaciones</span>
+                    </div>
+                    <div class="card-body-gray">
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Sobredosis de Opioides</strong> (conocida o sospechada).</li>
+                            <li><strong>Depresión Respiratoria Severa</strong> de causa desconocida (como agente de diagnóstico y tratamiento).</li>
+                            <li><strong>Apnea</strong> con sospecha de consumo de opioides.</li>
+                            <li>Revertir sedación por opioides (ej. post-operatorio).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. Contraindicaciones / Precauciones -->
+                <div class="card">
+                    <div class="card-header card-header-naloxona flex items-center space-x-2">
+                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v2m0 4h.01"/><path d="M2.9 12.55a10 10 0 0 1 18.2 0M12 2a10 10 0 0 1 10 10c0 7-10 12-10 12S2 19 2 12A10 10 0 0 1 12 2z"/></svg>
+                        <span>Precauciones</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Contraindicación real:</strong> Hipersensibilidad conocida (extremadamente rara).</li>
+                            <li><strong>Precaución:</strong> Pacientes con dependencia física a opioides (incluyendo neonatos de madres dependientes).
+                                <span class="block text-sm text-orange-700 font-medium">Riesgo de Síndrome de Abstinencia agudo (violento, pero no mortal).</span>
+                            </li>
+                         </ul>
+                    </div>
+                </div>
+                
+                <!-- 4. Puntos Clave -->
+                <div class="card">
+                    <div class="card-header card-header-naloxona flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 4.3a1.6 1.6 0 0 1 .3 1.1 1.5 1.5 0 0 1-1.4 1.5 1.6 1.6 0 0 1-1.1-.3l-3.3-3c-.4-.3-.5-1-.2-1.4l.6-.8c.3-.4 1-.5 1.4-.2l3.7 2.9Z"/><path d="M11.6 8.8c-.3.4-.5 1-.2 1.4l3.3 3c.4.3 1.1.2 1.4-.2l.8-.6c.3-.4.2-1.1-.2-1.4l-2.9-3.7a1.6 1.6 0 0 0-1.1-.3 1.5 1.5 0 0 0-1.1.8Z"/><path d="m14 22-3-3"/><path d="m20 16-3-3"/><path d="M10 14 7 11"/><path d="M6 8 3 5"/><path d="m19 5-3 3"/><path d="m13 11-3 3"/></svg>
+                        <span>Puntos Clave</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Vida Media Corta (30-90 min):</strong> Más corta que la mayoría de opioides (Fentanilo, Metadona).</li>
+                            <li><strong>Riesgo de Re-sedación:</strong> El paciente puede volver a caer en depresión respiratoria. ¡Requiere vigilancia continua!</li>
+                            <li><strong>Seguridad:</strong> "En caso de duda, adminístrela". Es un fármaco muy seguro.</li>
+                         </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Dosis (Emergencia) -->
+                <div class="card md:col-span-3">
+                    <div class="card-header card-header-naloxona">
+                        Dosis de Emergencia (Adulto)
+                    </div>
+                    <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-orange-50 rounded-lg">
+                            <h3 class="font-bold text-lg text-orange-800">Intranasal (IN)</h3>
+                            <p class="text-2xl font-bold text-orange-900">4 mg (1 spray)</p>
+                            <p class="text-gray-700">En una fosa nasal. Repetir a los 2-3 min si no hay respuesta.</p>
+                        </div>
+                        <div class="p-4 bg-orange-50 rounded-lg">
+                            <h3 class="font-bold text-lg text-orange-800">Intravenosa (IV)</h3>
+                            <p class="text-2xl font-bold text-orange-900">0.4 - 2 mg</p>
+                            <p class="text-gray-700">Repetir cada 2-3 min. Titular hasta restaurar la respiración (no la conciencia).</p>
+                        </div>
+                        <div class="p-4 bg-orange-50 rounded-lg">
+                            <h3 class="font-bold text-lg text-orange-800">Intramuscular (IM)</h3>
+                            <p class="text-2xl font-bold text-orange-900">0.4 - 2 mg</p>
+                            <p class="text-gray-700">Si no se dispone de acceso IV. Misma dosis que IV.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== PÁGINA 3: FLUMAZENIL (Contenido existente) ===== -->
+        <div id="page-flumazenil" class="page-content hidden">
+            <!-- Título Principal -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#00695c]">
+                    Infografía: Flumazenil (Anexate®)
+                </h1>
+                <p class="text-xl text-gray-600 mt-2">El Antagonista Benzodiacepínico</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. ¿Qué es y Cómo actúa? -->
+                <div class="card md:col-span-2">
+                    <div class="card-header card-header-flumazenil">
+                        ¿Qué es y Cómo Actúa?
+                    </div>
+                    <div class="card-body space-y-4">
+                        <p class="text-lg text-gray-700">
+                            Es un <strong>antagonista puro de las benzodiacepinas (BZD)</strong>. Revierte los efectos sedantes e hipnóticos de las BZD.
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Mecanismo de Acción:</strong> Actúa compitiendo con las BZD por su sitio de unión específico en el receptor GABA-A. Bloquea el receptor, impidiendo que las BZD ejerzan su efecto depresor del SNC.
+                        </p>
+                        <p class="text-gray-700 font-medium">
+                            No revierte los efectos de otros sedantes, hipnóticos o del alcohol.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Imagen -->
+                <div class="card flex items-center justify-center p-4">
+                    <!--  -->
+                    <img src="https://placehold.co/300x200/e0f2f1/00695c?text=Flumazenil+IV" 
+                         alt="Vial de Flumazenil" 
+                         class="rounded-lg object-cover">
+                    <p class="text-center text-sm text-gray-600 mt-2">Administración intravenosa.</p>
+                </div>
+
+                <!-- 2. Indicaciones -->
+                <div class="card">
+                    <div class="card-header card-header-flumazenil flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        <span>Indicaciones</span>
+                    </div>
+                    <div class="card-body-gray">
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Reversión de Sedación:</strong> Para revertir sedación por BZD en procedimientos diagnósticos o terapéuticos.</li>
+                            <li><strong>Sobredosis Pura de BZD:</strong> En pacientes con depresión respiratoria o coma por una sobredosis *confirmada* y *única* de BZD.</li>
+                            <li>Diagnóstico diferencial en comas de origen desconocido (uso controvertido).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. ¡CONTRAINDICACIONES Y PRECAUCIONES! (MUY IMPORTANTE) -->
+                <div class="card border-4 border-red-500">
+                    <div class="card-header bg-red-700 text-white flex items-center space-x-2">
+                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>¡ALERTA! Contraindicaciones</span>
+                    </div>
+                    <div class="card-body-gray bg-red-50">
+                         <p class="text-red-700 font-bold mb-3">Su uso puede ser peligroso y precipitar convulsiones que no responden a BZD.</p>
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Sobredosis Mixta:</strong> Especialmente con antidepresivos tricíclicos (ADT) o cocaína. (Riesgo de arritmias y convulsiones).</li>
+                            <li><strong>Dependencia a BZD:</strong> Pacientes en tratamiento crónico con BZD. (Riesgo de síndrome de abstinencia severo y convulsiones).</li>
+                            <li><strong>Antecedentes de Convulsiones:</strong> Pacientes con epilepsia o historial convulsivo.</li>
+                            <li>Alteraciones del QRS en el EKG.</li>
+                         </ul>
+                    </div>
+                </div>
+                
+                <!-- 4. Puntos Clave -->
+                <div class="card">
+                    <div class="card-header card-header-flumazenil flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 4.3a1.6 1.6 0 0 1 .3 1.1 1.5 1.5 0 0 1-1.4 1.5 1.6 1.6 0 0 1-1.1-.3l-3.3-3c-.4-.3-.5-1-.2-1.4l.6-.8c.3-.4 1-.5 1.4-.2l3.7 2.9Z"/><path d="M11.6 8.8c-.3.4-.5 1-.2 1.4l3.3 3c.4.3 1.1.2 1.4-.2l.8-.6c.3-.4.2-1.1-.2-1.4l-2.9-3.7a1.6 1.6 0 0 0-1.1-.3 1.5 1.5 0 0 0-1.1.8Z"/><path d="m14 22-3-3"/><path d="m20 16-3-3"/><path d="M10 14 7 11"/><path d="M6 8 3 5"/><path d="m19 5-3 3"/><path d="m13 11-3 3"/></svg>
+                        <span>Puntos Clave</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Vida Media Corta (40-80 min):</strong> Más corta que la mayoría de BZD.</li>
+                            <li><strong>Riesgo de Re-sedación:</strong> El paciente puede volver a sedarse. Requiere vigilancia.</li>
+                            <li><strong>Titulación Lenta:</strong> Administrar lentamente para evitar efectos adversos.</li>
+                            <li>"Asegurar la vía aérea" es prioritario sobre la reversión.</li>
+                         </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Dosis (Emergencia) -->
+                <div class="card md:col-span-3">
+                    <div class="card-header card-header-flumazenil">
+                        Dosis de Reversión (Adulto)
+                    </div>
+                    <div class="card-body">
+                        <h3 class="font-bold text-lg text-teal-800">Administración Intravenosa (IV) Lenta</h3>
+                        <p class="text-gray-700 mb-2">Se administra en incrementos pequeños y lentos (titulación).</p>
+                        <ul class="list-decimal list-inside space-y-2 text-gray-700">
+                            <li><strong>Dosis Inicial:</strong> <span class="text-2xl font-bold text-teal-900">0.2 mg</span> (administrados en 15-30 segundos).</li>
+                            <li><strong>Esperar:</strong> Evaluar respuesta por 45-60 segundos.</li>
+                            <li><strong>Dosis Siguientes:</strong> Si no hay respuesta, administrar <span class="text-2xl font-bold text-teal-900">0.1 mg</span> (o 0.2mg) cada 60 segundos.</li>
+                            <li><strong>Dosis Máxima:</strong> Generalmente <span class="text-xl font-bold text-teal-900">1 mg</span> (Total). Rara vez hasta 3 mg en sobredosis severas.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- ===== PÁGINA 4: ADENOSINA (Contenido existente) ===== -->
+        <div id="page-adenosina" class="page-content hidden">
+            <!-- Título Principal -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#701a75]">
+                    Infografía: Adenosina (Adenocard®)
+                </h1>
+                <p class="text-xl text-gray-600 mt-2">Antiarrítmico de Vida Media Ultracorta</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. ¿Qué es y Cómo actúa? -->
+                <div class="card md:col-span-2">
+                    <div class="card-header card-header-adenosina">
+                        ¿Qué es y Cómo Actúa?
+                    </div>
+                    <div class="card-body space-y-4">
+                        <p class="text-lg text-gray-700">
+                            Es un <strong>antiarrítmico</strong> endógeno (natural del cuerpo) que "resetea" el corazón.
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Mecanismo de Acción:</strong> Ralentiza drásticamente la conducción eléctrica a través del <strong>Nodo Auriculoventricular (AV)</strong>. Esto interrumpe el circuito de reentrada, que es la causa de la mayoría de las taquicardias supraventriculares (TSV).
+                        </p>
+                        <p class="text-gray-700 font-medium">
+                            <strong>Resultado:</strong> Causa una pausa cardíaca muy breve (asistolia transitoria) antes de que el ritmo sinusal normal se reanude.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Imagen -->
+                <div class="card flex items-center justify-center p-4">
+                    <!--  -->
+                    <img src="https://placehold.co/300x200/f3e8ff/701a75?text=TSV+->+Asistolia+->+Ritmo+Sinusal" 
+                         alt="Tira de EKG mostrando conversión de TSV" 
+                         class="rounded-lg object-cover">
+                    <p class="text-center text-sm text-gray-600 mt-2">Conversión de TSV a Ritmo Sinusal.</p>
+                </div>
+
+                <!-- 2. Indicaciones -->
+                <div class="card">
+                    <div class="card-header card-header-adenosina flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        <span>Indicaciones</span>
+                    </div>
+                    <div class="card-body-gray">
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Tratamiento de elección para:</strong></li>
+                            <li>Taquicardia Supraventricular (TSV) por reentrada, estable, con QRS estrecho y regular.</li>
+                            <li><strong>Uso diagnóstico:</strong></li>
+                            <li>En taquicardias regulares de QRS ancho (si se está *seguro* de que es TSV con aberrancia).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. ¡CONTRAINDICACIONES! -->
+                <div class="card border-4 border-red-500">
+                    <div class="card-header bg-red-700 text-white flex items-center space-x-2">
+                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span>¡ALERTA! Contraindicaciones</span>
+                    </div>
+                    <div class="card-body-gray bg-red-50">
+                         <p class="text-red-700 font-bold mb-3">No administrar si se sospecha:</p>
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Taquicardia de QRS Ancho Irregular:</strong> (Podría ser Fibrilación Auricular con WPW, riesgo de colapso a FV).</li>
+                            <li><strong>Taquicardia Ventricular (TV):</strong> Ineficaz y puede causar hipotensión severa.</li>
+                            <li>Bloqueo AV de 2º o 3er grado, o Síndrome del Seno Enfermo (sin marcapasos).</li>
+                            <li>Asma activa o EPOC severo (puede causar broncoespasmo).</li>
+                         </ul>
+                    </div>
+                </div>
+                
+                <!-- 4. Puntos Clave y Efectos Secundarios -->
+                <div class="card">
+                    <div class="card-header card-header-adenosina flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 4.3a1.6 1.6 0 0 1 .3 1.1 1.5 1.5 0 0 1-1.4 1.5 1.6 1.6 0 0 1-1.1-.3l-3.3-3c-.4-.3-.5-1-.2-1.4l.6-.8c.3-.4 1-.5 1.4-.2l3.7 2.9Z"/><path d="M11.6 8.8c-.3.4-.5 1-.2 1.4l3.3 3c.4.3 1.1.2 1.4-.2l.8-.6c.3-.4.2-1.1-.2-1.4l-2.9-3.7a1.6 1.6 0 0 0-1.1-.3 1.5 1.5 0 0 0-1.1.8Z"/><path d="m14 22-3-3"/><path d="m20 16-3-3"/><path d="M10 14 7 11"/><path d="M6 8 3 5"/><path d="m19 5-3 3"/><path d="m13 11-3 3"/></svg>
+                        <span>Puntos Clave y Efectos</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Vida Media: ¡< 10 segundos!</strong></li>
+                            <li><strong>¡ADVERTIR AL PACIENTE!</strong> Sentirá "sensación de muerte inminente", rubor facial, dolor de pecho y dificultad para respirar. Es normal y dura segundos.</li>
+                            <li><strong>¡VER EL MONITOR!</strong> Es normal ver una pausa sinusal o asistolia transitoria justo después de la administración.</li>
+                         </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Dosis (Adulto) -->
+                <div class="card md:col-span-3">
+                    <div class="card-header card-header-adenosina">
+                        Dosis y Administración (Adulto)
+                    </div>
+                    <div class="card-body grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Dosis -->
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <h3 class="font-bold text-lg text-purple-800">Protocolo de Dosis (IV Rápida)</h3>
+                            <ol class="list-decimal list-inside mt-2 space-y-2">
+                                <li>
+                                    <strong>Dosis Inicial:</strong>
+                                    <span class="block text-2xl font-bold text-purple-900">6 mg</span>
+                                </li>
+                                <li>
+                                    <strong>Si no convierte en 1-2 min:</strong>
+                                    <span class="block text-2xl font-bold text-purple-900">12 mg</span>
+                                </li>
+                                <li>
+                                    <strong>Si no convierte en 1-2 min:</strong>
+                                    <span class="block text-2xl font-bold text-purple-900">12 mg</span> (Repetir)
+                                </li>
+                            </ol>
+                        </div>
+                        <!-- Técnica de Administración -->
+                        <div class="p-4 bg-purple-50 rounded-lg">
+                            <h3 class="font-bold text-lg text-purple-800">Técnica de Administración (¡CRÍTICA!)</h3>
+                            <ul class="list-disc list-inside mt-2 space-y-2 text-gray-700">
+                                <li>Usar una vía IV de gran calibre (ej. 18G) y lo más cercana al corazón (antecubital, no en la mano).</li>
+                                <li>Conectar la jeringa de Adenosina a una llave de 3 vías.</li>
+                                <li>Conectar una jeringa de 20 mL de Salino (Flush) a la otra vía.</li>
+                                <li><strong>Administrar la dosis IV lo más RÁPIDO posible (1-2 segundos).</strong></li>
+                                <li><strong>Inmediatamente, administrar el flush de 20 mL de salino</strong> tan rápido como sea posible.</li>
+                                <li>Elevar la extremidad para ayudar al fármaco a llegar al corazón.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== PÁGINA 5: KETAMINA (Contenido existente) ===== -->
+        <div id="page-ketamina" class="page-content hidden">
+            <!-- Título Principal -->
+            <header class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-[#2d3748]">
+                    Infografía: Ketamina
+                </h1>
+                <p class="text-xl text-gray-600 mt-2">Anestésico Disociativo</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- 1. ¿Qué es y Cómo actúa? -->
+                <div class="card md:col-span-3">
+                    <div class="card-header card-header-ketamina">
+                        ¿Qué es y Cómo Actúa?
+                    </div>
+                    <div class="card-body space-y-4">
+                        <p class="text-lg text-gray-700">
+                            Es un <strong>anestésico disociativo</strong>. Produce un estado similar a un trance (disociación) que proporciona potente <strong>analgesia, sedación y amnesia</strong>.
+                        </p>
+                        <p class="text-gray-700">
+                            <strong>Mecanismo de Acción:</strong> Principalmente es un antagonista no competitivo del receptor <strong>NMDA</strong>. A diferencia de otros sedantes, estimula el sistema simpático (libera catecolaminas), lo que generalmente mantiene o aumenta la presión arterial y la frecuencia cardíaca.
+                        </p>
+                        <p class="text-gray-700 font-medium">
+                            Produce broncodilatación y, por lo general, preserva los reflejos de la vía aérea y el impulso respiratorio a dosis bajas/moderadas.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 2. Indicaciones -->
+                <div class="card">
+                    <div class="card-header card-header-ketamina flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                        <span>Indicaciones</span>
+                    </div>
+                    <div class="card-body-gray">
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Secuencia Rápida de Intubación (SRI):</strong> Especialmente en pacientes hipotensos, asmáticos o con estado mental desconocido.</li>
+                            <li><strong>Sedación para Procedimientos:</strong> (ej. cardioversión, reducción de fracturas).</li>
+                            <li><strong>Analgesia Severa:</strong> (ej. quemaduras, traumatismos graves), a menudo en dosis sub-disociativas.</li>
+                            <li><strong>Agitación Extrema / Delirio Agitado.</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 3. ¡PRECAUCIONES! -->
+                <div class="card">
+                    <div class="card-header card-header-ketamina flex items-center space-x-2">
+                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v2m0 4h.01"/><path d="M2.9 12.55a10 10 0 0 1 18.2 0M12 2a10 10 0 0 1 10 10c0 7-10 12-10 12S2 19 2 12A10 10 0 0 1 12 2z"/></svg>
+                        <span>Precauciones / Contraindicaciones</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <p class="text-gray-700 font-bold mb-3">Relativas (evaluar riesgo/beneficio):</p>
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Hipertensión Severa No Controlada</strong> o crisis hipertensiva (puede elevarla más).</li>
+                            <li><strong>Psicosis Activa</strong> o esquizofrenia (puede exacerbarla).</li>
+                            <li>Enfermedad coronaria grave (el aumento de FC y PA puede inducir isquemia).</li>
+                            <li>Lesión ocular penetrante (aumenta la presión intraocular).</li>
+                         </ul>
+                    </div>
+                </div>
+                
+                <!-- 4. Puntos Clave y Efectos -->
+                <div class="card">
+                    <div class="card-header card-header-ketamina flex items-center space-x-2">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 4.3a1.6 1.6 0 0 1 .3 1.1 1.5 1.5 0 0 1-1.4 1.5 1.6 1.6 0 0 1-1.1-.3l-3.3-3c-.4-.3-.5-1-.2-1.4l.6-.8c.3-.4 1-.5 1.4-.2l3.7 2.9Z"/><path d="M11.6 8.8c-.3.4-.5 1-.2 1.4l3.3 3c.4.3 1.1.2 1.4-.2l.8-.6c.3-.4.2-1.1-.2-1.4l-2.9-3.7a1.6 1.6 0 0 0-1.1-.3 1.5 1.5 0 0 0-1.1.8Z"/><path d="m14 22-3-3"/><path d="m20 16-3-3"/><path d="M10 14 7 11"/><path d="M6 8 3 5"/><path d="m19 5-3 3"/><path d="m13 11-3 3"/></svg>
+                        <span>Puntos Clave y Efectos</span>
+                    </div>
+                    <div class="card-body-gray">
+                         <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Reflejos Vía Aérea:</strong> Generalmente se mantienen, pero NO se debe confiar en ellos (siempre aspirar).</li>
+                            <li><strong>Laringoespasmo:</strong> Raro, pero posible. Tratar con VPP o succinilcolina.</li>
+                            <li><strong>Reacción de Emergencia:</strong> Al despertar (agitación, alucinaciones). Menos común en adultos mayores y si se co-administra BZD (ej. Midazolam).</li>
+                            <li><strong>Hipersalivación:</strong> Puede ocurrir (considerar Atropina).</li>
+                         </ul>
+                    </div>
+                </div>
+
+                <!-- 5. Dosis (Adulto) -->
+                <div class="card md:col-span-3">
+                    <div class="card-header card-header-ketamina">
+                        Dosis de Referencia (Adulto)
+                    </div>
+                    <div class="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Dosis -->
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="font-bold text-lg text-gray-800">Sedación (SRI) / Disociación</h3>
+                            <p class="text-2xl font-bold text-gray-900">1 - 2 mg/kg IV</p>
+                            <p class="text-gray-700">(Efecto en 30-60 seg)</p>
+                            <hr class="my-2 border-gray-300">
+                            <p class="text-2xl font-bold text-gray-900">3 - 5 mg/kg IM</p>
+                            <p class="text-gray-700">(Efecto en 3-5 min)</p>
+                        </div>
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="font-bold text-lg text-gray-800">Analgesia (Sub-Disociativa)</h3>
+                            <p class="text-2xl font-bold text-gray-900">0.1 - 0.3 mg/kg IV</p>
+                            <p class="text-gray-700">Administrar lentamente en 2-3 min para evitar disociación.</p>
+                            <p class="text-gray-700">(Puede repetirse cada 10-15 min).</p>
+                        </div>
+                        <div class="p-4 bg-gray-100 rounded-lg">
+                            <h3 class="font-bold text-lg text-gray-800">Agitación Severa (IM)</h3>
+                            <p class="text-2xl font-bold text-gray-900">4 - 5 mg/kg IM</p>
+                            <p class="text-gray-700">Dosis única para control rápido en entorno prehospitalario.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+    
+    <!-- Footer General -->
+    <footer class="mt-8 text-center text-gray-500 text-sm py-4 border-t border-gray-200">
+        <p>Estas infografías son una guía rápida y no reemplazan el juicio clínico. Consulte siempre los protocolos locales.</p>
+    </footer>
+
+    <!-- ===== LÓGICA DE NAVEGACIÓN (JAVASCRIPT) ===== -->
+    <script>
+        // --- Lógica para la animación de Capnografía ---
+        const toggleButton = document.getElementById('toggle-animation');
+        const animationContainer = document.getElementById('capnogram-animation-container');
+        let isPaused = false;
+
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                if (isPaused) {
+                    animationContainer.classList.remove('animation-paused');
+                    toggleButton.textContent = 'Pausar';
+                } else {
+                    animationContainer.classList.add('animation-paused');
+                    toggleButton.textContent = 'Reproducir';
+                }
+                isPaused = !isPaused;
+            });
+        }
+
+        // --- Lógica para la navegación de páginas ---
+        function showPage(pageId) {
+            // Ocultar todas las páginas
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Desactivar todos los botones del menú
+            const buttons = document.querySelectorAll('.nav-button');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-blue-700', 'text-white');
+                btn.classList.add('text-gray-300', 'hover:bg-gray-700', 'hover:text-white');
+            });
+            
+            // Mostrar la página seleccionada
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+            
+            // Activar el botón seleccionado
+            // Ajuste para manejar los IDs
+            let btnId = '';
+            if (pageId === 'page-oximetria') btnId = 'btn-oximetria'; // <-- NUEVA LÍNEA
+            else if (pageId === 'page-capnografia') btnId = 'btn-capnografia';
+            else if (pageId === 'page-naloxona') btnId = 'btn-naloxona';
+            else if (pageId === 'page-flumazenil') btnId = 'btn-flumazenil';
+            else if (pageId === 'page-adenosina') btnId = 'btn-adenosina';
+            else if (pageId === 'page-ketamina') btnId = 'btn-ketamina'; 
+
+            const activeButton = document.getElementById(btnId);
+            if (activeButton) {
+                activeButton.classList.add('bg-blue-700', 'text-white');
+                activeButton.classList.remove('text-gray-300', 'hover:bg-gray-700', 'hover:text-white');
+            }
+        }
+
+        // Mostrar la primera página (Oximetría) por defecto al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('page-oximetria');
+        });
+    </script>
+</body>
+</html>
+

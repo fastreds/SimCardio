@@ -125,6 +125,11 @@ app.post('/api/upload', upload.single('ekgImage'), (req, res) => {
     res.json({ filePath: 'uploads/' + req.file.filename });
 });
 
+// Explicitly serve index.html for root
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 // Start Server (only if direct execution)
 if (require.main === module) {
     app.listen(PORT, () => {

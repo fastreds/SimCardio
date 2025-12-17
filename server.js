@@ -15,8 +15,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve u
 
 // Configure Multer
 const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+try {
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir);
+    }
+} catch (e) {
+    console.warn("Could not create uploads directory (likely read-only filesystem):", e.message);
 }
 
 const storage = multer.diskStorage({

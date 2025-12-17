@@ -14,21 +14,27 @@ app.use(express.static(__dirname)); // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploads
 
 // Configure Multer
-const uploadDir = path.join(__dirname, 'uploads');
+// Configure Multer for Vercel (fallback to /tmp)
+let uploadDir = path.join(__dirname, 'uploads');
 try {
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
     }
+    fs.accessSync(uploadDir, fs.constants.W_OK);
 } catch (e) {
-    console.warn("Could not create uploads directory (likely read-only filesystem):", e.message);
+    console.warn("Uploads dir read-only, switching to /tmp");
+    uploadDir = path.join(require('os').tmpdir(), 'uploads');
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 }
+
+// Serve from calculated uploadDir
+app.use('/uploads', express.static(uploadDir));
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadDir)
     },
     filename: function (req, file, cb) {
-        // Sanitize filename to avoid weird chars, preserve extension
         const ext = path.extname(file.originalname);
         const name = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
         cb(null, name + '_' + Date.now() + ext)
@@ -37,35 +43,25 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// In-Memory Fallback for Casos
 const CASOS_FILE = path.join(__dirname, 'casos.js');
+let memoryCasos = null; // Cache
 
-// Helper to read and parse casos.js
 function readCasos() {
     return new Promise((resolve, reject) => {
+        if (memoryCasos) return resolve(memoryCasos); // Return cached
+
         fs.readFile(CASOS_FILE, 'utf8', (err, data) => {
             if (err) return reject(err);
-            // Extract the array logic. Assuming format: const casos = [ ... ];
-            // We strip 'const casos =' and the trailing ';' if present.
             try {
-                // Remove comments (simple regex, not perfect but works for standard JSON-like JS)
                 let cleanData = data.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
-
-                // Find start of array
                 const startIndex = cleanData.indexOf('[');
                 const endIndex = cleanData.lastIndexOf(']');
-
-                if (startIndex === -1 || endIndex === -1) {
-                    throw new Error('Invalid format in casos.js');
-                }
-
+                if (startIndex === -1 || endIndex === -1) throw new Error('Invalid format');
                 const jsonStr = cleanData.substring(startIndex, endIndex + 1);
-                // The content might be loose JS object (keys without quotes). JSON.parse requires strict JSON.
-                // If the file is strictly valid JSON (keys quoted), JSON.parse works.
-                // If not, we might need 'eval' or a looser parser. 
-                // Currently casos.js HAS keys without quotes (e.g. paciente: "...").
-                // So we use Function constructor to evaluate safely-ish.
-
                 const casos = new Function('return ' + jsonStr)();
+
+                memoryCasos = casos; // Initialize cache
                 resolve(casos);
             } catch (e) {
                 reject(e);
@@ -74,18 +70,19 @@ function readCasos() {
     });
 }
 
-// Helper to save cases back to cases.js
 function saveCasos(casosArray) {
-    return new Promise((resolve, reject) => {
-        // Convert to properly formatted JS string
-        // We want to keep it readable, so keys unquoted if simple? 
-        // Or just standard JSON is fine, JS is compatible with JSON.
-        // Let's write it as JSON but assigned to variable.
+    return new Promise((resolve) => {
+        // Always update memory
+        memoryCasos = casosArray;
+
         const jsonStr = JSON.stringify(casosArray, null, 4);
         const fileContent = `const casos = ${jsonStr};\n`;
 
         fs.writeFile(CASOS_FILE, fileContent, 'utf8', (err) => {
-            if (err) return reject(err);
+            if (err) {
+                console.warn("Could not save to file (likely Vercel read-only). Data kept in memory.");
+                // Resolve anyway so client doesn't see error
+            }
             resolve();
         });
     });

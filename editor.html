@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Casos - SimCardio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Titillium Web', sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            height: calc(100vh - 100px);
+        }
+
+        /* Sidebar List */
+        .sidebar {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .case-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .case-item:hover {
+            background: #f8f9fa;
+        }
+
+        .case-item.active {
+            background: #e9ecef;
+            border-left: 4px solid #007bff;
+        }
+
+        .case-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Main Editor */
+        .editor {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            display: none;
+        }
+
+        .editor.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        /* Stages Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            table-layout: fixed;
+            /* Fixed layout for better control */
+        }
+
+        td,
+        th {
+            padding: 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        /* Column Widths */
+        th:nth-child(1) {
+            width: 30%;
+        }
+
+        /* Info Adicional */
+        th:nth-child(2) {
+            width: 40px;
+        }
+
+        /* HR */
+        th:nth-child(3) {
+            width: 60px;
+        }
+
+        /* BP */
+        th:nth-child(4) {
+            width: 40px;
+        }
+
+        /* SpO2 */
+        th:nth-child(5) {
+            width: 40px;
+        }
+
+        /* EtCO2 */
+        th:nth-child(6) {
+            width: 40px;
+        }
+
+        /* Glu */
+        th:nth-child(7) {
+            width: 120px;
+        }
+
+        /* Ritmo */
+        th:nth-child(8) {
+            width: 120px;
+        }
+
+        /* EKG 12D */
+        th:nth-child(9) {
+            width: 30px;
+        }
+
+        /* Delete */
+
+        .table-input {
+            width: 100%;
+            border: 1px solid transparent;
+            background: transparent;
+            padding: 4px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .table-input:focus {
+            background: white;
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* File Upload Styles */
+        .file-upload-cell {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        .preview-link {
+            display: block;
+            margin-bottom: 5px;
+            color: #007bff;
+            text-decoration: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>Editor de Casos</h1>
+                <a href="index.html" style="color: #666; text-decoration: none;">&larr; Volver al Menú</a>
+            </div>
+            <button class="btn btn-success" onclick="saveAll()">Guardar Cambios Globales</button>
+        </header>
+
+        <div class="grid">
+            <div class="sidebar">
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="addNewCase()">+ Nuevo
+                    Caso</button>
+                <div id="case-list"></div>
+            </div>
+
+            <div class="editor" id="editor-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Editar Caso</h2>
+                    <button class="btn btn-danger btn-sm" onclick="deleteCurrentCase()">Eliminar Caso</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción del Paciente / Caso</label>
+                    <textarea id="edit-paciente" rows="3"></textarea>
+                </div>
+
+                <h3>Etapas (Signos Vitales)</h3>
+                <table id="stages-table">
+                    <thead>
+                        <tr>
+                            <th>Info Adicional</th>
+                            <th>HR</th>
+                            <th>BP</th>
+                            <th>SpO2</th>
+                            <th>EtCO2</th>
+                            <th>Glu</th>
+                            <th>Ritmo</th>
+                            <th>EKG 12D</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button class="btn btn-secondary btn-sm" style="margin-top: 10px;" onclick="addStage()">+ Agregar
+                    Etapa</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cases = [];
+        let currentCaseIndex = -1;
+
+        // Fetch cases on load
+        async function loadCases() {
+            const res = await fetch('/api/casos');
+            cases = await res.json();
+            renderCaseList();
+        }
+
+        function renderCaseList() {
+            const listContainer = document.getElementById('case-list');
+            listContainer.innerHTML = '';
+
+            cases.forEach((c, index) => {
+                const div = document.createElement('div');
+                div.className = `case-item ${index === currentCaseIndex ? 'active' : ''}`;
+                const summary = c.paciente.length > 50 ? c.paciente.substring(0, 50) + '...' : c.paciente;
+                div.innerHTML = `<div class="case-name">Caso ${index + 1}</div><div style="font-size:0.8rem; color:#666;">${summary}</div>`;
+                div.onclick = () => selectCase(index);
+                listContainer.appendChild(div);
+            });
+        }
+
+        function selectCase(index) {
+            currentCaseIndex = index;
+            renderCaseList();
+
+            const c = cases[index];
+            const panel = document.getElementById('editor-panel');
+            panel.classList.add('active');
+
+            document.getElementById('edit-paciente').value = c.paciente;
+            renderStages(c.etapas);
+        }
+
+        const RHYTHM_OPTIONS = [
+            "RITMO_SINUSAL",
+            "ASISTOLIA",
+            "FIBRILACION_VENTRICULAR",
+            "TAQUICARDIA_VENTRICULAR",
+            "FIBRILACION_AURICULAR",
+            "BRADICARDIA_SINUSAL",
+            "TAQUICARDIA_SUPRAVENTRICULAR",
+            "BLOQUEO_AV_GRADO_1",
+            "INFARTO_AGUDO_MIOCARDIO",
+            "BLOQUEO_AV_2_MOBITZ_1"
+        ];
+
+        function renderStages(etapas) {
+            const tbody = document.getElementById('stages-table').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            etapas.forEach((etapa, idx) => {
+                const tr = document.createElement('tr');
+
+                // Build rhythm select options
+                let rhythmSelectHtml = `<select class="table-input" onchange="updateStage(${idx}, 'ritmo', this.value)">`;
+                RHYTHM_OPTIONS.forEach(opt => {
+                    const selected = (etapa.ritmo === opt) ? 'selected' : '';
+                    rhythmSelectHtml += `<option value="${opt}" ${selected}>${opt}</option>`;
+                });
+                rhythmSelectHtml += `</select>`;
+
+                // Image Upload Cell
+                let imageHtml = `<div class="file-upload-cell">`;
+                if (etapa.ekg12d) {
+                    imageHtml += `<a href="${etapa.ekg12d}" target="_blank" class="preview-link">Ver Imagen</a>`;
+                }
+                imageHtml += `<input type="file" accept="image/*" onchange="uploadImage(this, ${idx})" style="width: 100%; font-size: 0.7rem;">`;
+                imageHtml += `</div>`;
+
+                tr.innerHTML = `
+                <td><textarea class="table-input" rows="3" onchange="updateStage(${idx}, 'infoAdicional', this.value)">${etapa.infoAdicional || ''}</textarea></td>
+                <td><input class="table-input" value="${etapa.hr || ''}" onchange="updateStage(${idx}, 'hr', this.value)"></td>
+                <td><input class="table-input" value="${etapa.bp || ''}" onchange="updateStage(${idx}, 'bp', this.value)"></td>
+                <td><input class="table-input" value="${etapa.spo2 || ''}" onchange="updateStage(${idx}, 'spo2', this.value)"></td>
+                <td><input class="table-input" value="${etapa.capno || ''}" onchange="updateStage(${idx}, 'capno', this.value)"></td>
+                <td><input class="table-input" value="${etapa.glucose || ''}" onchange="updateStage(${idx}, 'glucose', this.value)"></td>
+                <td>${rhythmSelectHtml}</td>
+                <td>${imageHtml}</td>
+                <td><button onclick="removeStage(${idx})" style="color:red;border:none;background:none;cursor:pointer;">&times;</button></td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Upload Logic
+        async function uploadImage(input, stageIdx) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('ekgImage', input.files[0]);
+
+                try {
+                    const res = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        // Save path to stage
+                        cases[currentCaseIndex].etapas[stageIdx].ekg12d = data.filePath;
+                        renderStages(cases[currentCaseIndex].etapas); // Re-render to show link relative to what was saved
+                    } else {
+                        alert('Error uploading image');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('Error uploading image');
+                }
+            }
+        }
+
+        // Data updates
+        document.getElementById('edit-paciente').addEventListener('input', (e) => {
+            if (currentCaseIndex > -1) cases[currentCaseIndex].paciente = e.target.value;
+            renderCaseList(); // Update sidebar preview
+        });
+
+        function updateStage(stageIdx, field, value) {
+            cases[currentCaseIndex].etapas[stageIdx][field] = value;
+        }
+
+        function addStage() {
+            if (currentCaseIndex === -1) return;
+            cases[currentCaseIndex].etapas.push({
+                infoAdicional: "Nueva etapa", bp: "--", spo2: "--", capno: "--", hr: "60", glucose: "--", ritmo: "SINUSAL"
+            });
+            renderStages(cases[currentCaseIndex].etapas);
+        }
+
+        function removeStage(stageIdx) {
+            cases[currentCaseIndex].etapas.splice(stageIdx, 1);
+            renderStages(cases[currentCaseIndex].etapas);
+        }
+
+        function addNewCase() {
+            cases.push({
+                paciente: "Nuevo Caso Clínico",
+                etapas: []
+            });
+            selectCase(cases.length - 1);
+            renderCaseList();
+        }
+
+        function deleteCurrentCase() {
+            if (confirm("¿Seguro que desea eliminar este caso?")) {
+                cases.splice(currentCaseIndex, 1);
+                currentCaseIndex = -1;
+                document.getElementById('editor-panel').classList.remove('active');
+                renderCaseList();
+            }
+        }
+
+        async function saveAll() {
+            try {
+                const res = await fetch('/api/casos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cases)
+                });
+                if (res.ok) alert("Casos guardados correctamente");
+                else alert("Error al guardar");
+            } catch (e) {
+                alert("Error de conexión");
+            }
+        }
+
+        loadCases();
+    </script>
+
+</body>
+
+</html>

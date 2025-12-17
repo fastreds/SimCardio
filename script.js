@@ -22,14 +22,14 @@ function updateParameters(params = {}) {
         "hr-value": `0 `,
         "glucose-value": `0`,
         "history-container": "Monitor sin conectar"
-        
-    
-     
+
+
+
     };
 
     Object.keys(defaultValues).forEach(key => {
         let value = params[key];
-        
+
         if (value === undefined) {
             value = defaultValues[key];
         } else if (value === "") {
@@ -37,13 +37,13 @@ function updateParameters(params = {}) {
         } else if (!isNaN(value)) {
             value = getRandomValue(parseInt(value), 5);
         }
-        
-        document.getElementById(key).innerHTML  = value;
+
+        document.getElementById(key).innerHTML = value;
     });
 }
 
 interact('.container').draggable({
-  
+
     onmove(event) {
         const target = event.target;
         const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
@@ -52,14 +52,14 @@ interact('.container').draggable({
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
     },
-            // Simulando un campo magnético (snap)
-snap: {
-    targets: [
-        interact.snappers.grid({ x: 25, y: 25 }) // "pegado" a una cuadrícula de 25px   
-    ],
-    range: 25, // Distancia de atracción
-    relativePoints: [{ x: 0.25, y: 0.25 }]
-}
+    // Simulando un campo magnético (snap)
+    snap: {
+        targets: [
+            interact.snappers.grid({ x: 25, y: 25 }) // "pegado" a una cuadrícula de 25px   
+        ],
+        range: 25, // Distancia de atracción
+        relativePoints: [{ x: 0.25, y: 0.25 }]
+    }
 });
 
 function resetPositions() {
@@ -67,7 +67,7 @@ function resetPositions() {
         el.style.transform = 'translate(0, 0)';
         el.setAttribute('data-x', 0);
         el.setAttribute('data-y', 0);
-     
+
     });
 }
 
@@ -77,7 +77,7 @@ function resetPositions() {
 const fullscreenBtn = document.getElementById("fullscreen-btn");
 
 function toggleFullscreen() {
-    if (!document.fullscreenElement && !document.mozFullScreenElement && 
+    if (!document.fullscreenElement && !document.mozFullScreenElement &&
         !document.webkitFullscreenElement && !document.msFullscreenElement) {
         // Activar pantalla completa
         let elem = document.documentElement;
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     casos.forEach((caso, index) => {
         let option = document.createElement("option");
         option.value = index;
-        option.textContent = `${caso.paciente.split(",",2)}`;
+        option.textContent = `${caso.paciente.split(",", 2)}`;
         selectCaso.appendChild(option);
     });
 });
@@ -142,9 +142,9 @@ document.getElementById("paso_caso-btn").addEventListener("click", function () {
     } else {
         //alert("Caso finalizado");
         cronometro.pause();
-        updateParameters({"history-container": "Caso Finalizado"});
+        updateParameters({ "history-container": "Caso Finalizado" });
         ritmo = "ASISTOLIA";
-        setRhythm(ritmo,0);
+        setRhythm(ritmo, 0);
     }
 });
 
@@ -164,8 +164,23 @@ function actualizarCaso() {
         "glucose-value": etapa.glucose,
         "history-container": message
     });
-    if(!etapa.ritmo)  etapa.ritmo = "ASISTOLIA";
-    setRhythm(etapa.ritmo,etapa.hr);
+    if (!etapa.ritmo) etapa.ritmo = "ASISTOLIA";
+    setRhythm(etapa.ritmo, etapa.hr);
+
+    // EKG 12D Button Logic
+    const ekgBtn = document.getElementById("ekg12d-btn");
+    const ekgModal = document.getElementById("ekg-modal");
+    const ekgImg = document.getElementById("ekg-modal-img");
+
+    if (etapa.ekg12d) {
+        ekgBtn.style.display = "inline-block";
+        ekgBtn.onclick = () => {
+            ekgImg.src = etapa.ekg12d;
+            ekgModal.style.display = "flex";
+        };
+    } else {
+        ekgBtn.style.display = "none";
+    }
 }
 
 undefined

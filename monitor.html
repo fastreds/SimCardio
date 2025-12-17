@@ -25,6 +25,8 @@
                 <select id="caso-select"></select>
                 <button id="iniciar_caso-btn">Iniciar</button>
                 <button id="paso_caso-btn">Avanzar</button>
+                <button id="ekg12d-btn" style="display:none; background-color: #6f42c1; color: white;">Ver
+                    Examen</button>
             </div>
             <div class="center-info">
                 <div id="time-container">
@@ -35,6 +37,8 @@
             <div class="right-controls">
                 <button onclick="resetPositions()">Reset</button>
                 <button id="fullscreen-btn">⛶</button>
+                <button onclick="window.location.href='index.html'"
+                    style="background-color: #dc3545; margin-left:10px;">Salir</button>
             </div>
         </div>
 
@@ -86,7 +90,23 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div id="ekg-modal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
+        <div style="position:relative; width:90%; height:90%;">
+            <button onclick="closeEkgModal()"
+                style="position:absolute; top:-40px; right:0; color:white; background:red; border:none; padding:10px; font-size:1.2rem; cursor:pointer;">Cerrar
+                X</button>
+            <img id="ekg-modal-img" src="" style="width:100%; height:100%; object-fit:contain;">
+        </div>
+    </div>
+
+    <script>
+        function closeEkgModal() {
+            document.getElementById('ekg-modal').style.display = 'none';
+        }
+    </script>
+
     <script src="timer.js"></script>
     <script src="ecg/ecg.js"></script>
     <script src="script.js"></script>

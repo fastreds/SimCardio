@@ -1,0 +1,27 @@
+{
+  "name": "simcardio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "casos.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fastreds/SimCardio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fastreds/SimCardio/issues"
+  },
+  "homepage": "https://github.com/fastreds/SimCardio#readme",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "multer": "^2.0.2"
+  }
+}

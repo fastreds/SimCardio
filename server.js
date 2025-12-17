@@ -121,7 +121,11 @@ app.post('/api/upload', upload.single('ekgImage'), (req, res) => {
     res.json({ filePath: 'uploads/' + req.file.filename });
 });
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+// Start Server (only if direct execution)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

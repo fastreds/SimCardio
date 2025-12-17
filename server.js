@@ -130,6 +130,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Explicitly serve other HTML pages
+app.get('/editor.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'editor.html'));
+});
+
+app.get('/monitor.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'monitor.html'));
+});
+
 // Start Server (only if direct execution)
 if (require.main === module) {
     app.listen(PORT, () => {

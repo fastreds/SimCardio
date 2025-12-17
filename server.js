@@ -30,17 +30,8 @@ try {
 // Serve from calculated uploadDir
 app.use('/uploads', express.static(uploadDir));
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir)
-    },
-    filename: function (req, file, cb) {
-        const ext = path.extname(file.originalname);
-        const name = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
-        cb(null, name + '_' + Date.now() + ext)
-    }
-});
-
+// Use Memory Storage for Multer to avoid DiskStorage issues directly
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // In-Memory Fallback for Casos
@@ -118,8 +109,23 @@ app.post('/api/upload', upload.single('ekgImage'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
     }
-    // Return the relative path
-    res.json({ filePath: 'uploads/' + req.file.filename });
+
+    // Generate filename manually
+    const ext = path.extname(req.file.originalname);
+    const name = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
+    const filename = name + '_' + Date.now() + ext;
+    const targetPath = path.join(uploadDir, filename);
+
+    // Write file to uploadDir
+    fs.writeFile(targetPath, req.file.buffer, (err) => {
+        if (err) {
+            console.error("Error writing upload:", err);
+            return res.status(500).json({ error: 'Failed to save file: ' + err.message });
+        }
+        console.log("File saved to:", targetPath);
+        // Return relative path for frontend
+        res.json({ filePath: 'uploads/' + filename });
+    });
 });
 
 // Explicitly serve index.html for root

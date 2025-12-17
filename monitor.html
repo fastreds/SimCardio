@@ -1,51 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, height=device-height">
     <title>Simulador de Signos Vitales</title>
+    <!-- Digital/Medical Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Titillium+Web:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
     <link rel="stylesheet" href="ecg/ecg.css">
     <link rel="stylesheet" href="style.css">
-    
 </head>
+
 <body>
-    <div class="top-bar">
-        <button onclick="resetPositions()">Restablecer Posiciones</button>
-        <button id="fullscreen-btn">Pantalla Completa</button>
-        <select id="caso-select">        </select>
+    <div class="monitor-frame">
+        <div class="top-bar">
+            <div class="left-controls">
+                <select id="caso-select"></select>
+                <button id="iniciar_caso-btn">Iniciar</button>
+                <button id="paso_caso-btn">Avanzar</button>
+            </div>
+            <div class="center-info">
+                <div id="time-container">
+                    <h4>00:00</h4>
+                    <div id="time-marks"></div>
+                </div>
+            </div>
+            <div class="right-controls">
+                <button onclick="resetPositions()">Reset</button>
+                <button id="fullscreen-btn">⛶</button>
+            </div>
+        </div>
 
-       
-        <button id="iniciar_caso-btn">iniciar caso</button>
-        <button id="paso_caso-btn">Avanzar</button> 
-         <div id="time-container" ><h4></h4><h3></h3></div>
-       
-    </div>
-    <br><br>
-    
-    <div id="main-container">
-    <div class="grid-container">
-   
-        <div id="blood-pressure-container" class="container"> <h3>Presión Arterial   </h3> <p id="bp-value">120/80 </p> </div>
-        <div id="spo2-container" class="container"> <h3>Oximetría SpO2   </h3> <p id="spo2-value">98% </p> </div>
-        <div id="respiratoria-container" class="container"> <h3>Frecuencia Respiratoria</h3> <p id="fr-value">n/d </p> </div>
-        <div id="capnometry-container" class="container"> <h3>Capnometría mmHg</h3> <p id="capno-value">35 </p> </div>
-        <div id="heart-rate-container" class="container"> <h3>Frecuencia Cardíaca</h3> <p id="hr-value">75 </p> </div>
-        <div id="glucose-container" class="container"> <h3>Glicemia mg/dL</h3> <p id="glucose-value">90 </p> </div>
-        <div id="ecg-container" class="container">  <canvas id="ecg-chart"></canvas> </div>
-       
-        
-    </div>
+        <div id="main-container">
+            <!-- ECG Section occupies significant space -->
+            <div id="ecg-container" class="container vital-section">
+                <div class="vital-header">ECG / Lead II</div>
+                <canvas id="ecg-chart"></canvas>
+            </div>
 
-    <div id="history-container" class="container"> </div>
-</div>
+            <!-- Vitals Grid -->
+            <div class="vitals-grid">
+                <div id="heart-rate-container" class="container vital-box hr-box">
+                    <div class="vital-label">HR <span class="unit">bpm</span></div>
+                    <div id="hr-value" class="vital-value">--</div>
+                </div>
+
+                <div id="blood-pressure-container" class="container vital-box bp-box">
+                    <div class="vital-label">NIBP <span class="unit">mmHg</span></div>
+                    <div id="bp-value" class="vital-value">--/--</div>
+                </div>
+
+                <div id="spo2-container" class="container vital-box spo2-box">
+                    <div class="vital-label">SpO2 <span class="unit">%</span></div>
+                    <div id="spo2-value" class="vital-value">--</div>
+                    <div class="pulsatile-bar"></div>
+                </div>
+
+                <div id="respiratoria-container" class="container vital-box rr-box">
+                    <div class="vital-label">RESP <span class="unit">rpm</span></div>
+                    <div id="fr-value" class="vital-value">--</div>
+                </div>
+
+                <div id="capnometry-container" class="container vital-box etco2-box">
+                    <div class="vital-label">EtCO2 <span class="unit">mmHg</span></div>
+                    <div id="capno-value" class="vital-value">--</div>
+                </div>
+
+                <div id="glucose-container" class="container vital-box glu-box">
+                    <div class="vital-label">GLU <span class="unit">mg/dL</span></div>
+                    <div id="glucose-value" class="vital-value">--</div>
+                </div>
+            </div>
+
+            <div id="history-container" class="container history-box">
+                <div class="vital-label">HISTORIAL / EVENTOS</div>
+                <div id="history-content">Sistema listo...</div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="timer.js"></script>
     <script src="ecg/ecg.js"></script>
     <script src="script.js"></script>
     <script src="casos.js"></script>
-
-
 </body>
+
 </html>

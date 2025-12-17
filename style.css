@@ -1,127 +1,382 @@
-/* ===== Estilos base ===== */
+/* ===== Hospital Monitor Design System ===== */
+
+/* Base Reset & Fonts */
+:root {
+    --color-bg: #000000;
+    --color-grid: #111111;
+    --color-hr: #00ff00;
+    /* Green */
+    --color-spo2: #00ffff;
+    /* Cyan */
+    --color-bp: #ff3333;
+    /* Red */
+    --color-rr: #ffff00;
+    /* Yellow */
+    --color-etco2: #ff9900;
+    /* Orange */
+    --color-glu: #ffffff;
+    /* White */
+    --color-text-dim: #666666;
+    --font-digital: 'Share Tech Mono', monospace;
+    --font-ui: 'Titillium Web', sans-serif;
+
+    /* Responsive Vars */
+    --header-height: 50px;
+    --gap-size: 8px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    /* Touch friendly: prevent text selection */
+}
+
 body {
-    background-color: #000;
+    background-color: var(--color-bg);
+    color: var(--color-glu);
+    font-family: var(--font-ui);
+    overflow: hidden;
+    /* Prevent scrolling on monitor */
+    height: 100vh;
+    width: 100vw;
+    /* Fix for mobile browsers address bar */
+    height: 100dvh;
+}
+
+/* Background Grid Effect */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(var(--color-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    opacity: 0.5;
+}
+
+/* Main Layout Frame */
+.monitor-frame {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px;
+    max-width: 100%;
+}
+
+/* ===== Top Control Bar ===== */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    border-bottom: 2px solid #333;
+    padding: 0 10px;
+    height: var(--header-height);
+    flex-shrink: 0;
+    font-size: 0.9rem;
+}
+
+.left-controls,
+.right-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+button {
+    background: #333;
+    color: #ccc;
+    border: 1px solid #555;
+    padding: 4px 10px;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+button:active {
+    background: #555;
+    transform: scale(0.98);
+}
+
+select {
+    background: #222;
     color: #fff;
-    font-family: Arial, sans-serif;
+    border: 1px solid #444;
+    padding: 4px;
+    border-radius: 4px;
+    max-width: 120px;
+}
+
+/* Timer Display */
+#time-container {
+    border: 1px solid #333;
+    background: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    min-width: 80px;
+}
+
+#time-container h4 {
+    color: var(--color-glu);
+    font-family: var(--font-digital);
+    font-size: 1.4rem;
+    margin: 0;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+#time-marks {
+    font-size: 0.65rem;
+    color: #888;
+    max-width: 100px;
+    white-space: nowrap;
     overflow: hidden;
-    padding-top: 70px;
+    text-overflow: ellipsis;
 }
 
-/* ===== Barra superior ===== */
-.top-bar {
-    width: 100%;
-    background: #222;
-    padding: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-/* ===== Contenedores generales ===== */
-.grid-container {
+/* ===== Main Dashboard Layout ===== */
+#main-container {
+    flex-grow: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-    width: 90%;
-    max-width: 900px;
+    /* Adjusted rows: ECG gets priority, History is small fixed at bottom */
+    grid-template-rows: minmax(150px, 3.5fr) minmax(180px, 4fr) 45px;
+    gap: var(--gap-size);
+    padding-top: var(--gap-size);
+    height: calc(100% - var(--header-height));
+    overflow: hidden;
 }
 
-.container {
-    background-color: #1a1a1a;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 1em;
-    cursor: grab;
-    box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
-}
-
-h3 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-}
-
-/* ===== Estilo de los valores ===== */
-p {
-    font-weight: bold;
-    font-size: 1.6em;
-    background-color: #000;
-    display: inline-block;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 5px 0;
-}
-
-/* ===== Botones ===== */
-button {
-    padding: 10px 15px;
-    background-color: #008000;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-size: 1em;
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background-color: #006400;
-}
-
-/* ===== Contenedores de signos vitales ===== */
+/* ECG Section */
 #ecg-container {
-    border: 3px solid red;
-    width: 500px;
-    height: 250px;
+    border: 1px solid #333;
+    background: rgba(0, 20, 0, 0.2);
+    position: relative;
+    border-left: 4px solid var(--color-hr);
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    padding: 0 !important;
+    min-height: 0;
+    /* Important for grid overflow */
 }
 
-#blood-pressure-container { border: 3px solid blue; }
-#spo2-container { border: 3px solid #0d71ac; }
-#respiratoria-container { border: 3px solid green; }
-#capnometry-container { border: 3px solid yellow; }
-#heart-rate-container { border: 3px solid red; }
-#glucose-container { border: 3px solid purple; }
-
-#time-container { border: 3px solid purple; font-size: x-small;} 
-
-
-/* ===== Contenedor de historial ===== */
-#history-container {
-    border: 3px solid white;
-    font-size: large;
-    width: 400px;
+.vital-header {
+    position: absolute;
+    top: 4px;
+    left: 8px;
+    font-size: 0.75rem;
+    color: var(--color-hr);
+    opacity: 0.8;
+    text-transform: uppercase;
+    z-index: 10;
 }
 
-/* ===== Responsive Design ===== */
+canvas#ecg-chart {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* Vitals Grid Area */
+.vitals-grid {
+    display: grid;
+    /* Force 3 columns on standard view */
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: var(--gap-size);
+    min-height: 0;
+    /* Allows shrinking */
+}
+
+/* Vital Box Styling */
+.vital-box {
+    background: #050505;
+    border: 1px solid #222;
+    border-radius: 4px;
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+    /* Allow shrinking */
+}
+
+/* Box Colors */
+.hr-box {
+    color: var(--color-hr);
+    border-top: 2px solid var(--color-hr);
+}
+
+.spo2-box {
+    color: var(--color-spo2);
+    border-top: 2px solid var(--color-spo2);
+}
+
+.bp-box {
+    color: var(--color-bp);
+    border-top: 2px solid var(--color-bp);
+}
+
+.rr-box {
+    color: var(--color-rr);
+    border-top: 2px solid var(--color-rr);
+}
+
+.etco2-box {
+    color: var(--color-etco2);
+    border-top: 2px solid var(--color-etco2);
+}
+
+.glu-box {
+    color: var(--color-glu);
+    border-top: 2px solid var(--color-glu);
+}
+
+.vital-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0.9;
+    display: flex;
+    justify-content: space-between;
+}
+
+.unit {
+    font-size: 0.7em;
+    opacity: 0.7;
+    font-weight: 400;
+}
+
+.vital-value {
+    font-family: var(--font-digital);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    /* Responsive text sizing */
+    line-height: 1;
+    text-align: right;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-top: auto;
+    margin-bottom: 2px;
+}
+
+#bp-value {
+    font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+}
+
+/* History Box */
+.history-box {
+    border: 1px solid #333;
+    background: #050505;
+    padding: 4px 8px;
+    overflow: hidden;
+    font-size: 0.8rem;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+#history-content {
+    font-family: monospace;
+    margin-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===== Tablet & Mobile Adjustments ===== */
+/* Tablet Portrait / Small Tablet Landscape (<1024px) */
+@media (max-width: 1024px) {
+    #main-container {
+        /* Even split between ECG and Vitals */
+        grid-template-rows: 1fr 1fr 40px;
+    }
+
+    .vital-value {
+        font-size: clamp(2rem, 6vw, 3.5rem);
+    }
+}
+
+/* Smaller Tablets / Large Phones (<768px) */
 @media (max-width: 768px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
+    .top-bar {
+        padding: 0 5px;
     }
-    p {
-        font-size: 1.4em;
+
+    .left-controls,
+    .right-controls {
+        gap: 5px;
+    }
+
+    button {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+
+    select {
+        font-size: 0.8rem;
+        max-width: 100px;
+    }
+
+    .vitals-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns */
+        grid-template-rows: repeat(3, 1fr);
+        /* 3 rows */
+    }
+
+    #main-container {
+        /* More space for vitals grid since it has 3 rows now */
+        grid-template-rows: 0.8fr 1.2fr 35px;
+    }
+
+    #bp-value {
+        font-size: clamp(1.2rem, 5vw, 2.5rem);
     }
 }
 
-@media (max-width: 480px) {
-    .grid-container {
-        grid-template-columns: 1fr;
+/* Landscape Mode Check (Short Screens) */
+@media (max-height: 600px) {
+    #main-container {
+        grid-template-rows: 1fr 1fr 30px;
+        gap: 4px;
     }
+
+    .vitals-grid {
+        /* Force 3 cols 2 rows to save vertical space */
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+
+    .vital-box {
+        padding: 2px 5px;
+    }
+
+    .vital-label {
+        font-size: 0.8rem;
+    }
+
+    .vital-value {
+        font-size: 2.5rem;
+    }
+
     .top-bar {
-        flex-direction: column;
-        align-items: left;
+        height: 40px;
     }
-    p {
-        font-size: 1.2em;
-    }
+}
+
+canvas {
+    background: transparent !important;
 }

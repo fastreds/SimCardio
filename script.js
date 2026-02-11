@@ -1,30 +1,28 @@
-// clase del cronometro 
+// clase del cronometro
 const cronometro = new Cronometro("time-container");
 
 function getRandomValue(base, range) {
     return Math.floor(base + (Math.random() * (range * 2 + 1)) - range);
 }
 
+const uiStatus = {
+    simStatus: document.getElementById("sim-status"),
+    caseName: document.getElementById("current-case-name"),
+    stageIndicator: document.getElementById("stage-indicator"),
+    rhythmIndicator: document.getElementById("rhythm-indicator")
+};
 
-
-/// valores iniciales para monitor sin conectar
-updateParameters({
-
-});
-
-
+updateParameters({});
 
 function updateParameters(params = {}) {
     const defaultValues = {
-        "bp-value": `0`,
-        "spo2-value": `0% `,
-        "capno-value": `0 `,
-        "hr-value": `0 `,
-        "glucose-value": `0`,
-        "history-container": "Monitor sin conectar"
-
-
-
+        "bp-value": "0/0",
+        "spo2-value": "0",
+        "capno-value": "0",
+        "hr-value": "0",
+        "fr-value": "0",
+        "glucose-value": "0",
+        "history-content": "Monitor sin conectar"
     };
 
     Object.keys(defaultValues).forEach(key => {
@@ -33,17 +31,19 @@ function updateParameters(params = {}) {
         if (value === undefined) {
             value = defaultValues[key];
         } else if (value === "") {
-            value = "- -";
-        } else if (!isNaN(value)) {
-            value = getRandomValue(parseInt(value), 5);
+            value = "--";
+        } else if (!isNaN(value) && key !== "history-content") {
+            value = getRandomValue(parseInt(value, 10), 5);
         }
 
-        document.getElementById(key).innerHTML = value;
+        const element = document.getElementById(key);
+        if (element) {
+            element.innerHTML = value;
+        }
     });
 }
 
 interact('.container').draggable({
-
     onmove(event) {
         const target = event.target;
         const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
@@ -52,12 +52,11 @@ interact('.container').draggable({
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
     },
-    // Simulando un campo magnético (snap)
     snap: {
         targets: [
-            interact.snappers.grid({ x: 25, y: 25 }) // "pegado" a una cuadrícula de 25px   
+            interact.snappers.grid({ x: 25, y: 25 })
         ],
-        range: 25, // Distancia de atracción
+        range: 25,
         relativePoints: [{ x: 0.25, y: 0.25 }]
     }
 });
@@ -67,26 +66,20 @@ function resetPositions() {
         el.style.transform = 'translate(0, 0)';
         el.setAttribute('data-x', 0);
         el.setAttribute('data-y', 0);
-
     });
 }
 
-
-
-// Pantalla completa
 const fullscreenBtn = document.getElementById("fullscreen-btn");
 
 function toggleFullscreen() {
     if (!document.fullscreenElement && !document.mozFullScreenElement &&
         !document.webkitFullscreenElement && !document.msFullscreenElement) {
-        // Activar pantalla completa
-        let elem = document.documentElement;
+        const elem = document.documentElement;
         if (elem.requestFullscreen) elem.requestFullscreen();
         else if (elem.mozRequestFullScreen) elem.mozRequestFullScreen();
         else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
         else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
     } else {
-        // Salir de pantalla completa
         if (document.exitFullscreen) document.exitFullscreen();
         else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
@@ -96,78 +89,135 @@ function toggleFullscreen() {
 
 fullscreenBtn.addEventListener("click", toggleFullscreen);
 
-// Activar pantalla completa automáticamente en móviles al tocar la pantalla
 if (window.innerWidth < 768) {
     document.addEventListener("touchstart", toggleFullscreen, { once: true });
 }
 
-/***********************************fin pantalla completa *********************************** */
-
-
-
-// Gestion de casos
 let casoActual = 0;
 let etapaActual = 0;
 
+function updateTopSummary(etapa = null) {
+    const caso = casos[casoActual];
+    const stageCount = caso?.etapas?.length || 0;
+    const stageNumber = stageCount ? etapaActual + 1 : 0;
 
-/// llena el select con los casos disponibles
-document.addEventListener("DOMContentLoaded", function () {
+    if (uiStatus.caseName && caso) {
+        uiStatus.caseName.textContent = caso.paciente.split(',')[0].trim();
+    }
+
+    if (uiStatus.stageIndicator) {
+        uiStatus.stageIndicator.textContent = `${stageNumber}/${stageCount}`;
+    }
+
+    if (uiStatus.simStatus) {
+        uiStatus.simStatus.textContent = etapa ? "Simulación en curso" : "Sin iniciar";
+    }
+
+    if (uiStatus.rhythmIndicator) {
+        uiStatus.rhythmIndicator.textContent = (etapa?.ritmo || "ASISTOLIA").replaceAll('_', ' ');
+    }
+}
+
+function fillCaseSelector() {
     const selectCaso = document.getElementById("caso-select");
     casos.forEach((caso, index) => {
-        let option = document.createElement("option");
+        const option = document.createElement("option");
         option.value = index;
-        option.textContent = `${caso.paciente.split(",", 2)}`;
+        option.textContent = `${index + 1}. ${caso.paciente.split(",", 2).join(',')}`;
         selectCaso.appendChild(option);
     });
-});
+    updateTopSummary();
+}
 
-document.getElementById("caso-select").addEventListener("change", function () {
-    casoActual = this.selectedIndex;
-    etapaActual = 0;
-    //actualizarCaso();
-});
+document.addEventListener("DOMContentLoaded", () => {
+    fillCaseSelector();
 
-document.getElementById("iniciar_caso-btn").addEventListener("click", function () {
-    etapaActual = 0;
-    actualizarCaso();
-    cronometro.reset();
-    cronometro.start();
-});
+    document.getElementById("caso-select").addEventListener("change", function () {
+        casoActual = this.selectedIndex;
+        etapaActual = 0;
+        updateTopSummary();
+        updateParameters({ "history-content": "Caso listo para iniciar." });
+    });
 
-document.getElementById("paso_caso-btn").addEventListener("click", function () {
-    if (etapaActual < casos[casoActual].etapas.length - 1) {
-        etapaActual++;
+    document.getElementById("iniciar_caso-btn").addEventListener("click", () => {
+        etapaActual = 0;
         actualizarCaso();
-        cronometro.mark();
-    } else {
-        //alert("Caso finalizado");
-        cronometro.pause();
-        updateParameters({ "history-container": "Caso Finalizado" });
-        ritmo = "ASISTOLIA";
-        setRhythm(ritmo, 0);
+        cronometro.reset();
+        cronometro.start();
+    });
+
+    document.getElementById("paso_caso-btn").addEventListener("click", () => {
+        if (etapaActual < casos[casoActual].etapas.length - 1) {
+            etapaActual++;
+            actualizarCaso();
+            cronometro.mark();
+        } else {
+            cronometro.pause();
+            updateParameters({ "history-content": "Caso finalizado." });
+            if (uiStatus.simStatus) uiStatus.simStatus.textContent = "Completado";
+            ritmo = "ASISTOLIA";
+            setRhythm(ritmo, 0);
+            if (uiStatus.rhythmIndicator) uiStatus.rhythmIndicator.textContent = "ASISTOLIA";
+        }
+    });
+
+    const helpBtn = document.getElementById("help-btn");
+    const helpModal = document.getElementById("help-modal");
+    if (helpBtn && helpModal) {
+        helpBtn.addEventListener("click", () => {
+            helpModal.style.display = "flex";
+        });
+        helpModal.addEventListener("click", (event) => {
+            if (event.target.id === "help-modal") {
+                helpModal.style.display = "none";
+            }
+        });
     }
+
+    document.addEventListener("keydown", (event) => {
+        if (["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+            return;
+        }
+
+        if (event.key.toLowerCase() === "i") {
+            document.getElementById("iniciar_caso-btn").click();
+        }
+        if (event.key.toLowerCase() === "a" || event.code === "Space") {
+            event.preventDefault();
+            document.getElementById("paso_caso-btn").click();
+        }
+        if (event.key.toLowerCase() === "f") {
+            toggleFullscreen();
+        }
+        if (event.key.toLowerCase() === "r") {
+            resetPositions();
+        }
+    });
 });
 
 function actualizarCaso() {
     const etapa = casos[casoActual].etapas[etapaActual];
-    let message = `${casos[casoActual].paciente} 
-    <hr style="border: 1px solid black; margin: 5px;"> 
-    <span style="font-weight: bold; color: green;">${casoActual}</span> 
-    <hr style="border: 1px solid black; margin: 5px;">
-    <span style="font-style: italic; color: gray;">${etapa.infoAdicional}</span>`;
+    const caseTitle = casos[casoActual].paciente;
+    const message = `${caseTitle}
+    <hr style="border: 1px solid #1f365f; margin: 6px 0;"> 
+    <strong>Etapa ${etapaActual + 1}</strong>
+    <hr style="border: 1px solid #1f365f; margin: 6px 0;">
+    <span style="font-style: italic; color: #b7c7ea;">${etapa.infoAdicional || "Sin información adicional"}</span>`;
 
     updateParameters({
         "bp-value": etapa.bp,
         "spo2-value": etapa.spo2,
         "capno-value": etapa.capno,
         "hr-value": etapa.hr,
+        "fr-value": etapa.fr,
         "glucose-value": etapa.glucose,
-        "history-container": message
+        "history-content": message
     });
+
     if (!etapa.ritmo) etapa.ritmo = "ASISTOLIA";
     setRhythm(etapa.ritmo, etapa.hr);
+    updateTopSummary(etapa);
 
-    // EKG 12D Button Logic
     const ekgBtn = document.getElementById("ekg12d-btn");
     const ekgModal = document.getElementById("ekg-modal");
     const ekgImg = document.getElementById("ekg-modal-img");
@@ -182,7 +232,3 @@ function actualizarCaso() {
         ekgBtn.style.display = "none";
     }
 }
-
-undefined
-
-/***********************************fin  casos *********************************** */

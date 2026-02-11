@@ -5,84 +5,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SimCardio - Inicio</title>
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            background-color: #0b0f19;
-            color: #fff;
-            font-family: 'Titillium Web', sans-serif;
+        :root {
+            --bg: #060b17;
+            --surface: #111a30;
+            --surface-2: #17253e;
+            --stroke: rgba(161, 190, 255, 0.23);
+            --text: #eaf0ff;
+            --text-soft: #aab9db;
+            --primary: #4e8fff;
+            --success: #2ee6a7;
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 10% 10%, #1f2f53 0%, #0c1528 40%, var(--bg) 75%);
+            display: grid;
+            place-items: center;
+            padding: 22px;
+        }
+
+        .shell {
+            width: min(1180px, 100%);
+            display: grid;
+            gap: 22px;
+        }
+
+        .hero {
+            background: linear-gradient(155deg, rgba(30, 49, 89, 0.9), rgba(15, 24, 42, 0.86));
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            padding: clamp(22px, 5vw, 42px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.38);
         }
 
         h1 {
-            font-size: 3rem;
-            margin-bottom: 40px;
-            color: #00ff00;
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            font-size: clamp(2rem, 4.6vw, 3.5rem);
+            margin-bottom: 8px;
+            letter-spacing: .02em;
+        }
+
+        .subtitle {
+            color: var(--text-soft);
+            max-width: 850px;
+            line-height: 1.45;
+            font-size: clamp(1rem, 1.7vw, 1.18rem);
+        }
+
+        .usp {
+            margin-top: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(74, 223, 165, 0.44);
+            color: #c7ffee;
+            background: rgba(46, 230, 167, 0.09);
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-size: .92rem;
+            font-weight: 600;
         }
 
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            max-width: 1200px;
-            width: 90%;
+            grid-template-columns: repeat(3, minmax(200px, 1fr));
+            gap: 18px;
         }
 
         .card {
-            background: #151a25;
-            border: 1px solid #333;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
             text-decoration: none;
-            color: #fff;
+            color: var(--text);
+            border: 1px solid var(--stroke);
+            border-radius: var(--radius);
+            background: linear-gradient(180deg, var(--surface), var(--surface-2));
+            padding: 24px;
+            min-height: 230px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 250px;
+            gap: 12px;
+            transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            border-color: #007bff;
-            box-shadow: 0 5px 20px rgba(0, 123, 255, 0.2);
+            transform: translateY(-6px);
+            border-color: rgba(102, 157, 255, .75);
+            box-shadow: 0 16px 34px rgba(35, 75, 154, 0.35);
         }
 
         .card-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 2.6rem;
+            margin-bottom: 2px;
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
         }
 
         .card-desc {
-            margin-top: 10px;
-            color: #aaa;
-            font-size: 0.9rem;
+            color: var(--text-soft);
+            line-height: 1.45;
+            font-size: 0.94rem;
+            margin-top: auto;
         }
 
         .card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            opacity: 0.62;
             pointer-events: none;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .menu-grid {
                 grid-template-columns: 1fr;
             }
@@ -91,32 +136,37 @@
 </head>
 
 <body>
+    <main class="shell">
+        <section class="hero">
+            <h1>SimCardio</h1>
+            <p class="subtitle">Entrena toma de decisiones en emergencias cardiovasculares con una experiencia visual
+                moderna, datos dinámicos en tiempo real y flujo de práctica orientado a equipos clínicos.</p>
+            <div class="usp">⚡ USP: Simulación rápida, inmersiva y lista para enseñanza práctica.</div>
+        </section>
 
-    <h1>SimCardio</h1>
+        <section class="menu-grid">
+            <a href="monitor.html" class="card">
+                <div class="card-icon">🫀</div>
+                <div class="card-title">Simulador</div>
+                <div class="card-desc">Monitor de signos vitales con ECG dinámico, escenarios por etapas y soporte para
+                    entrenamiento de respuesta clínica.</div>
+            </a>
 
-    <div class="menu-grid">
-        <!-- Simulator -->
-        <a href="monitor.html" class="card">
-            <div class="card-icon">⚡</div>
-            <div class="card-title">Simulador</div>
-            <div class="card-desc">Monitor de signos vitales en tiempo real</div>
-        </a>
+            <a href="editor.html" class="card">
+                <div class="card-icon">🛠️</div>
+                <div class="card-title">Mantenimiento</div>
+                <div class="card-desc">Crea, edita y personaliza casos clínicos para adaptar el simulador a tus protocolos
+                    y objetivos docentes.</div>
+            </a>
 
-        <!-- Maintenance -->
-        <a href="editor.html" class="card">
-            <div class="card-icon">🛠️</div>
-            <div class="card-title">Mantenimiento</div>
-            <div class="card-desc">Editor de casos clínicos y configuración</div>
-        </a>
-
-        <!-- Education (Coming Soon) -->
-        <a href="#" class="card disabled">
-            <div class="card-icon">📚</div>
-            <div class="card-title">Material Educativo</div>
-            <div class="card-desc">Próximamente: Guías y recursos</div>
-        </a>
-    </div>
-
+            <a href="#" class="card disabled">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Material Educativo</div>
+                <div class="card-desc">Próximamente: guías rápidas, checklist de escenarios y recursos didácticos
+                    integrados.</div>
+            </a>
+        </section>
+    </main>
 </body>
 
 </html>

@@ -1,7 +1,27 @@
+# Dependencies
 node_modules/
-uploads/
+
+# Next.js
+.next/
+out/
+
+# Vercel
+.vercel
+
+# Environment
+.env*.local
+
+# OS
 .DS_Store
 Thumbs.db
+
+# Logs
 *.log
-.vercel
-.env*.local
+
+# Uploads (runtime)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/

@@ -1,9 +1,5 @@
-/**
- * app/api/status/route.js
- */
 import { NextResponse } from 'next/server';
-
-const { storageMode } = require('@/lib/redis');
+import { storageMode } from '@/lib/redis';
 
 export async function GET() {
     return NextResponse.json({

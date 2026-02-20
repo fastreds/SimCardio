@@ -1,9 +1,5 @@
-/**
- * app/api/casos/route.js
- */
 import { NextResponse } from 'next/server';
-
-const { getCasos, saveCasos } = require('@/lib/redis');
+import { getCasos, saveCasos } from '@/lib/redis';
 
 export async function GET() {
     try {
@@ -11,7 +7,7 @@ export async function GET() {
         return NextResponse.json(casos);
     } catch (err) {
         console.error('GET /api/casos:', err);
-        return NextResponse.json({ error: 'Error al leer casos' }, { status: 500 });
+        return NextResponse.json({ error: 'Error al leer casos', detail: err.message }, { status: 500 });
     }
 }
 
@@ -25,6 +21,6 @@ export async function POST(request) {
         return NextResponse.json({ success: true, count: body.length });
     } catch (err) {
         console.error('POST /api/casos:', err);
-        return NextResponse.json({ error: 'Error al guardar casos' }, { status: 500 });
+        return NextResponse.json({ error: 'Error al guardar casos', detail: err.message }, { status: 500 });
     }
 }

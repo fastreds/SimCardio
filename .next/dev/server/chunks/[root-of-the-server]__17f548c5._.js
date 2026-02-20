@@ -47,53 +47,72 @@ const mod = __turbopack_context__.x("node:crypto", () => require("node:crypto"))
 
 module.exports = mod;
 }),
-"[project]/lib/redis.js [app-route] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"[project]/lib/redis.js [app-route] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
 
+__turbopack_context__.s([
+    "getCasos",
+    ()=>getCasos,
+    "saveCasos",
+    ()=>saveCasos,
+    "storageMode",
+    ()=>storageMode
+]);
 /**
- * lib/redis.js
- * Cliente Upstash Redis compartido para toda la app Next.js
- * Next.js transpila este archivo automáticamente mediante su bundler.
- */ const { Redis } = __turbopack_context__.r("[project]/node_modules/@upstash/redis/nodejs.js [app-route] (ecmascript)");
+ * lib/redis.js  — ESM puro, compatible con Next.js App Router
+ */ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$upstash$2f$redis$2f$nodejs$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/@upstash/redis/nodejs.mjs [app-route] (ecmascript) <locals>");
+;
 const KV_KEY = 'simcardio:casos';
-// Fallback para desarrollo local sin Redis
-function isRedisConfigured() {
-    return !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
-}
+let _redis = null;
 function getRedis() {
-    if (!isRedisConfigured()) return null;
-    return new Redis({
-        url: process.env.UPSTASH_REDIS_REST_URL,
-        token: process.env.UPSTASH_REDIS_REST_TOKEN
-    });
+    const url = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+    if (!url || !token) return null;
+    if (!_redis) {
+        _redis = new __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$upstash$2f$redis$2f$nodejs$2e$mjs__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__["Redis"]({
+            url,
+            token
+        });
+    }
+    return _redis;
 }
 async function getCasos() {
     const redis = getRedis();
-    if (redis) {
-        try {
-            const data = await redis.get(KV_KEY);
-            if (data) return Array.isArray(data) ? data : JSON.parse(data);
-        } catch (e) {
-            console.error('Redis read error:', e.message);
-        }
+    if (!redis) {
+        console.warn('[redis] No credentials — returning []');
+        return [];
     }
-    return [];
+    try {
+        const data = await redis.get(KV_KEY);
+        if (data === null || data === undefined) return [];
+        // Upstash puede devolver el objeto ya parseado o el string
+        if (Array.isArray(data)) return data;
+        if (typeof data === 'string') return JSON.parse(data);
+        return data;
+    } catch (e) {
+        console.error('[redis] getCasos error:', e.message);
+        return [];
+    }
 }
 async function saveCasos(casos) {
     const redis = getRedis();
-    if (redis) {
-        await redis.set(KV_KEY, JSON.stringify(casos));
-        return true;
+    if (!redis) {
+        console.warn('[redis] No credentials — save skipped');
+        return false;
     }
-    return false;
+    try {
+        // Guardamos siempre como string JSON para evitar ambigüedad en la lectura
+        await redis.set(KV_KEY, JSON.stringify(casos));
+        console.log(`[redis] Saved ${casos.length} casos`);
+        return true;
+    } catch (e) {
+        console.error('[redis] saveCasos error:', e.message);
+        throw e;
+    }
 }
 function storageMode() {
-    return isRedisConfigured() ? 'upstash-redis' : 'memory';
+    return process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN ? 'upstash-redis' : 'no-credentials';
 }
-module.exports = {
-    getCasos,
-    saveCasos,
-    storageMode
-};
 }),
 "[project]/app/api/casos/route.js [app-route] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -104,19 +123,19 @@ __turbopack_context__.s([
     "POST",
     ()=>POST
 ]);
-/**
- * app/api/casos/route.js
- */ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$redis$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/redis.js [app-route] (ecmascript)");
 ;
-const { getCasos, saveCasos } = __turbopack_context__.r("[project]/lib/redis.js [app-route] (ecmascript)");
+;
 async function GET() {
     try {
-        const casos = await getCasos();
+        const casos = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$redis$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["getCasos"])();
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json(casos);
     } catch (err) {
         console.error('GET /api/casos:', err);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Error al leer casos'
+            error: 'Error al leer casos',
+            detail: err.message
         }, {
             status: 500
         });
@@ -132,7 +151,7 @@ async function POST(request) {
                 status: 400
             });
         }
-        await saveCasos(body);
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$redis$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["saveCasos"])(body);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
             success: true,
             count: body.length
@@ -140,7 +159,8 @@ async function POST(request) {
     } catch (err) {
         console.error('POST /api/casos:', err);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Error al guardar casos'
+            error: 'Error al guardar casos',
+            detail: err.message
         }, {
             status: 500
         });

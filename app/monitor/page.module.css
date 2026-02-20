@@ -1,0 +1,395 @@
+/* Monitor — dark phosphor screen medical aesthetic */
+
+/* ─── Frame ──────────────────────────────────────────────── */
+.frame {
+    display: grid;
+    grid-template-rows: 52px 1fr;
+    height: 100dvh;
+    background: #060a0f;
+    overflow: hidden;
+    font-family: 'Titillium Web', sans-serif;
+    color: #e2e8f0;
+}
+
+/* ─── Top Bar ────────────────────────────────────────────── */
+.topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    background: #0a0f18;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    gap: 12px;
+}
+
+.topLeft,
+.topRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topCenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.cronoTime {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.4rem;
+    color: #00ff88;
+    line-height: 1;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    letter-spacing: 2px;
+}
+
+.cronoMarks {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+.mark {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: #475569;
+    padding: 0px 5px;
+    background: #0e1421;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+}
+
+/* ─── Buttons ────────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.caseSelect {
+    background: #0e1421;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    outline: none;
+    max-width: 280px;
+}
+
+.caseSelect:focus {
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.caseSelect option {
+    background: #0e1421;
+}
+
+.btnGreen {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.btnGreen:hover {
+    background: rgba(34, 197, 94, 0.2);
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+}
+
+.btnBlue {
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.btnBlue:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+.btnViolet {
+    background: rgba(139, 92, 246, 0.12);
+    color: #8b5cf6;
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.btnViolet:hover {
+    background: rgba(139, 92, 246, 0.2);
+}
+
+.btnGhost {
+    background: transparent;
+    color: #64748b;
+    border-color: rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+}
+
+.btnGhost:hover {
+    background: #1a2438;
+    color: #e2e8f0;
+}
+
+/* ─── Main Grid ──────────────────────────────────────────── */
+.main {
+    display: grid;
+    grid-template-columns: 1fr 180px 220px;
+    grid-template-rows: 1fr;
+    gap: 0;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* ─── ECG Container ──────────────────────────────────────── */
+.ecgContainer {
+    display: flex;
+    flex-direction: column;
+    background: #060a0f;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.vitalHeader {
+    padding: 6px 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #00ff00;
+    text-transform: uppercase;
+    background: rgba(0, 255, 0, 0.04);
+    border-bottom: 1px solid rgba(0, 255, 0, 0.08);
+    font-family: 'Share Tech Mono', monospace;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.ecgCanvas {
+    flex: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ─── Vitals Grid ────────────────────────────────────────── */
+.vitalsGrid {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.vitalBox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    cursor: grab;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.vitalBox:last-child {
+    border-bottom: none;
+}
+
+.vitalBox:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.vitalLabel {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+.vitalUnit {
+    font-size: 0.6rem;
+    opacity: 0.6;
+    font-weight: 400;
+}
+
+.vitalValue {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.9rem;
+    font-weight: 400;
+    line-height: 1.1;
+    text-shadow: 0 0 12px currentColor;
+    letter-spacing: 1px;
+}
+
+/* Color per vital */
+.boxHr {
+    color: #ef4444;
+}
+
+.boxHr .vitalLabel {
+    color: #ef4444;
+}
+
+.boxBp {
+    color: #f59e0b;
+}
+
+.boxBp .vitalLabel {
+    color: #f59e0b;
+}
+
+.boxSpo2 {
+    color: #06b6d4;
+}
+
+.boxSpo2 .vitalLabel {
+    color: #06b6d4;
+}
+
+.boxResp {
+    color: #3b82f6;
+}
+
+.boxResp .vitalLabel {
+    color: #3b82f6;
+}
+
+.boxEtco2 {
+    color: #8b5cf6;
+}
+
+.boxEtco2 .vitalLabel {
+    color: #8b5cf6;
+}
+
+.boxGlu {
+    color: #22c55e;
+}
+
+.boxGlu .vitalLabel {
+    color: #22c55e;
+}
+
+/* ─── History Box ────────────────────────────────────────── */
+.historyBox {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #070b12;
+}
+
+.historyContent {
+    flex: 1;
+    padding: 12px;
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 0.82rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.historyContent::-webkit-scrollbar {
+    width: 3px;
+}
+
+.historyContent::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+/* ─── EKG Modal ──────────────────────────────────────────── */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+}
+
+.modalContent {
+    position: relative;
+    width: 92%;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalClose {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.modalClose:hover {
+    background: #dc2626;
+}
+
+.modalImg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* ─── Responsive tablet / mobile ─────────────────────────── */
+@media (max-width: 900px) {
+    .main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 40vh auto 1fr;
+    }
+
+    .ecgContainer {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .vitalsGrid {
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        overflow-x: auto;
+    }
+
+    .vitalBox {
+        flex: 0 0 auto;
+        width: 100px;
+        border-bottom: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .vitalValue {
+        font-size: 1.4rem;
+    }
+}

@@ -10,55 +10,70 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Adjust paths for Vercel function environment (api/index.js is one level deep)
-// But Vercel's runtime might set __dirname to /var/task/api.
-// Root files like index.html are at /var/task.
-// Safest is to use path.join(__dirname, '..', 'filename') if in api/.
-
 const ROOT_DIR = path.join(__dirname, '..');
 
-// Serve static files
+// ─── Static Files ────────────────────────────────────────
 app.use(express.static(ROOT_DIR));
 
-// Configure Multer for Vercel (fallback to /tmp)
+// ─── Upload Directory ────────────────────────────────────
 let uploadDir = path.join(ROOT_DIR, 'uploads');
 try {
-    if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir);
-    }
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
     fs.accessSync(uploadDir, fs.constants.W_OK);
 } catch (e) {
-    console.warn("Uploads dir read-only, switching to /tmp");
+    console.warn('Uploads dir read-only, switching to /tmp');
     uploadDir = path.join(require('os').tmpdir(), 'uploads');
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 }
-
-// Serve from calculated uploadDir
 app.use('/uploads', express.static(uploadDir));
 
-// Use Memory Storage for Multer
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-// In-Memory Fallback for Casos
+// ─── Redis / KV Setup ────────────────────────────────────
+// Uses Upstash Redis in production (Vercel), falls back to local file in dev.
+const KV_KEY = 'simcardio:casos';
+
+let redisClient = null;
+
+function getRedis() {
+    if (redisClient) return redisClient;
+
+    const url   = process.env.UPSTASH_REDIS_REST_URL;
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+    if (url && token) {
+        try {
+            const { Redis } = require('@upstash/redis');
+            redisClient = new Redis({ url, token });
+            console.log('✅ Upstash Redis connected');
+        } catch (e) {
+            console.warn('⚠️  Could not initialize Redis:', e.message);
+        }
+    } else {
+        console.log('ℹ️  No Redis credentials found — using local file fallback');
+    }
+
+    return redisClient;
+}
+
+// ─── Local File Fallback ──────────────────────────────────
 const CASOS_FILE = path.join(ROOT_DIR, 'casos.js');
-let memoryCasos = null; // Cache
+let memoryCasos = null;
 
-function readCasos() {
+function readCasosFromFile() {
     return new Promise((resolve, reject) => {
-        if (memoryCasos) return resolve(memoryCasos); // Return cached
+        if (memoryCasos) return resolve(memoryCasos);
 
         fs.readFile(CASOS_FILE, 'utf8', (err, data) => {
             if (err) return reject(err);
             try {
-                let cleanData = data.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
-                const startIndex = cleanData.indexOf('[');
-                const endIndex = cleanData.lastIndexOf(']');
-                if (startIndex === -1 || endIndex === -1) throw new Error('Invalid format');
-                const jsonStr = cleanData.substring(startIndex, endIndex + 1);
-                const casos = new Function('return ' + jsonStr)();
-
-                memoryCasos = casos; // Initialize cache
+                let clean = data.replace(/\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '$1');
+                const start = clean.indexOf('[');
+                const end   = clean.lastIndexOf(']');
+                if (start === -1 || end === -1) throw new Error('Invalid format');
+                const casos = new Function('return ' + clean.substring(start, end + 1))();
+                memoryCasos = casos;
                 resolve(casos);
             } catch (e) {
                 reject(e);
@@ -67,25 +82,59 @@ function readCasos() {
     });
 }
 
-function saveCasos(casosArray) {
+function saveCasosToFile(casosArray) {
     return new Promise((resolve) => {
-        // Always update memory
         memoryCasos = casosArray;
-
-        const jsonStr = JSON.stringify(casosArray, null, 4);
-        const fileContent = `const casos = ${jsonStr};\n`;
-
-        fs.writeFile(CASOS_FILE, fileContent, 'utf8', (err) => {
-            if (err) {
-                console.warn("Could not save to file (likely Vercel read-only). Data kept in memory.");
-                // Resolve anyway so client doesn't see error
-            }
+        const content = `const casos = ${JSON.stringify(casosArray, null, 4)};\n`;
+        fs.writeFile(CASOS_FILE, content, 'utf8', (err) => {
+            if (err) console.warn('Could not save to file (read-only). Kept in memory.');
             resolve();
         });
     });
 }
 
-// API Routes
+// ─── Unified Read / Write ─────────────────────────────────
+async function readCasos() {
+    const redis = getRedis();
+
+    if (redis) {
+        try {
+            const data = await redis.get(KV_KEY);
+            if (data) {
+                // Upstash auto-parses JSON; if it's already an array, use it directly
+                return Array.isArray(data) ? data : JSON.parse(data);
+            }
+            // First run: seed Redis from the local file
+            console.log('ℹ️  Redis empty — seeding from casos.js');
+            const casos = await readCasosFromFile();
+            await redis.set(KV_KEY, JSON.stringify(casos));
+            return casos;
+        } catch (e) {
+            console.error('Redis read error, falling back to file:', e.message);
+        }
+    }
+
+    // Fallback
+    return readCasosFromFile();
+}
+
+async function saveCasos(casosArray) {
+    const redis = getRedis();
+
+    if (redis) {
+        try {
+            await redis.set(KV_KEY, JSON.stringify(casosArray));
+            console.log(`✅ Saved ${casosArray.length} cases to Redis`);
+            return;
+        } catch (e) {
+            console.error('Redis write error, falling back to file:', e.message);
+        }
+    }
+
+    return saveCasosToFile(casosArray);
+}
+
+// ─── API Routes ───────────────────────────────────────────
 app.get('/api/casos', async (req, res) => {
     try {
         const casos = await readCasos();
@@ -98,7 +147,7 @@ app.get('/api/casos', async (req, res) => {
 
 app.post('/api/casos', async (req, res) => {
     try {
-        const newCasos = req.body; // Expecting array of cases
+        const newCasos = req.body;
         if (!Array.isArray(newCasos)) {
             return res.status(400).json({ error: 'Expected an array of cases' });
         }
@@ -110,42 +159,36 @@ app.post('/api/casos', async (req, res) => {
     }
 });
 
-// Upload Endpoint
+// Health / status endpoint
+app.get('/api/status', (req, res) => {
+    const redis = getRedis();
+    res.json({
+        storage: redis ? 'upstash-redis' : 'local-file',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// ─── Upload ────────────────────────────────────────────────
 app.post('/api/upload', upload.single('ekgImage'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-    }
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-    // Generate filename manually
-    const ext = path.extname(req.file.originalname);
-    const name = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
-    const filename = name + '_' + Date.now() + ext;
-    const targetPath = path.join(uploadDir, filename);
+    const ext      = path.extname(req.file.originalname);
+    const name     = path.basename(req.file.originalname, ext).replace(/[^a-zA-Z0-9]/g, '_');
+    const filename = `${name}_${Date.now()}${ext}`;
+    const target   = path.join(uploadDir, filename);
 
-    // Write file to uploadDir
-    fs.writeFile(targetPath, req.file.buffer, (err) => {
+    fs.writeFile(target, req.file.buffer, (err) => {
         if (err) {
-            console.error("Error writing upload:", err);
+            console.error('Error writing upload:', err);
             return res.status(500).json({ error: 'Failed to save file: ' + err.message });
         }
-        console.log("File saved to:", targetPath);
-        // Return relative path for frontend
         res.json({ filePath: 'uploads/' + filename });
     });
 });
 
-// Explicitly serve index.html for root
-app.get('/', (req, res) => {
-    res.sendFile(path.join(ROOT_DIR, 'index.html'));
-});
-
-// Explicitly serve other HTML pages
-app.get('/editor.html', (req, res) => {
-    res.sendFile(path.join(ROOT_DIR, 'editor.html'));
-});
-
-app.get('/monitor.html', (req, res) => {
-    res.sendFile(path.join(ROOT_DIR, 'monitor.html'));
-});
+// ─── Static HTML Pages ────────────────────────────────────
+app.get('/',            (req, res) => res.sendFile(path.join(ROOT_DIR, 'index.html')));
+app.get('/editor.html', (req, res) => res.sendFile(path.join(ROOT_DIR, 'editor.html')));
+app.get('/monitor.html',(req, res) => res.sendFile(path.join(ROOT_DIR, 'monitor.html')));
 
 module.exports = app;

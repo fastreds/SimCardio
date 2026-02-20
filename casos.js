@@ -281,5 +281,19 @@ const casos = [
                 "ritmo": "RITMO_SINUSAL"
             }
         ]
+    },
+    {
+        "paciente": "Nuevo Caso Clínico",
+        "etapas": [
+            {
+                "infoAdicional": "Nueva etapa",
+                "bp": "78/35--",
+                "spo2": "88",
+                "capno": "--",
+                "hr": "51",
+                "glucose": "120",
+                "ritmo": "BLOQUEO_AV_GRADO_1"
+            }
+        ]
     }
 ];

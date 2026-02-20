@@ -1,9 +1,12 @@
 {
   "name": "simcardio",
   "version": "1.0.0",
-  "description": "",
-  "main": "api/index.js",
+  "description": "Simulador de signos vitales para entrenamiento médico",
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "server:legacy": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,15 +16,18 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/fastreds/SimCardio/issues"
   },
   "homepage": "https://github.com/fastreds/SimCardio#readme",
   "dependencies": {
+    "@upstash/redis": "^1.36.2",
     "body-parser": "^2.2.1",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   }
 }

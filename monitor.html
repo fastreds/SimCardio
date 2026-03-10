@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Titillium+Web:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&family=Titillium+Web:wght@400;600;700&display=swap"
         rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js"></script>
@@ -20,13 +20,15 @@
 
 <body>
     <div class="monitor-frame">
-        <div class="top-bar">
+        <header class="top-bar">
             <div class="left-controls">
-                <select id="caso-select"></select>
-                <button id="iniciar_caso-btn">Iniciar</button>
-                <button id="paso_caso-btn">Avanzar</button>
-                <button id="ekg12d-btn" style="display:none; background-color: #6f42c1; color: white;">Ver
-                    Examen</button>
+                <div class="control-group">
+                    <label for="caso-select" class="control-label">Caso clínico</label>
+                    <select id="caso-select"></select>
+                </div>
+                <button id="iniciar_caso-btn" title="Iniciar caso (I)">Iniciar</button>
+                <button id="paso_caso-btn" title="Avanzar etapa (A)">Avanzar</button>
+                <button id="ekg12d-btn" class="accent-btn" style="display:none;">Ver Examen 12D</button>
             </div>
             <div class="center-info">
                 <div id="time-container">
@@ -35,21 +37,38 @@
                 </div>
             </div>
             <div class="right-controls">
-                <button onclick="resetPositions()">Reset</button>
-                <button id="fullscreen-btn">⛶</button>
-                <button onclick="window.location.href='index.html'"
-                    style="background-color: #dc3545; margin-left:10px;">Salir</button>
+                <button onclick="resetPositions()" title="Reordenar paneles">Reset</button>
+                <button id="fullscreen-btn" title="Pantalla completa (F)">⛶</button>
+                <button id="help-btn" class="accent-btn" title="Atajos de teclado">Atajos</button>
+                <button onclick="window.location.href='index.html'" class="danger-btn">Salir</button>
             </div>
-        </div>
+        </header>
+
+        <section class="status-strip" aria-label="Resumen del caso">
+            <div class="status-chip">
+                <span class="chip-label">Estado</span>
+                <span id="sim-status">Sin iniciar</span>
+            </div>
+            <div class="status-chip">
+                <span class="chip-label">Caso</span>
+                <span id="current-case-name">No seleccionado</span>
+            </div>
+            <div class="status-chip">
+                <span class="chip-label">Etapa</span>
+                <span id="stage-indicator">0/0</span>
+            </div>
+            <div class="status-chip">
+                <span class="chip-label">Ritmo</span>
+                <span id="rhythm-indicator">ASISTOLIA</span>
+            </div>
+        </section>
 
         <div id="main-container">
-            <!-- ECG Section occupies significant space -->
             <div id="ecg-container" class="container vital-section">
-                <div class="vital-header">ECG / Lead II</div>
+                <div class="vital-header">ECG / Derivación II</div>
                 <canvas id="ecg-chart"></canvas>
             </div>
 
-            <!-- Vitals Grid -->
             <div class="vitals-grid">
                 <div id="heart-rate-container" class="container vital-box hr-box">
                     <div class="vital-label">HR <span class="unit">bpm</span></div>
@@ -83,27 +102,41 @@
                 </div>
             </div>
 
-            <div id="history-container" class="container history-box">
+            <div id="history-container" class="container history-box" role="log" aria-live="polite">
                 <div class="vital-label">HISTORIAL / EVENTOS</div>
                 <div id="history-content">Sistema listo...</div>
             </div>
         </div>
     </div>
 
+    <div id="help-modal" class="modal-shell" style="display:none;">
+        <div class="modal-card">
+            <h3>Atajos y flujo recomendado</h3>
+            <ul>
+                <li><strong>I</strong>: iniciar caso desde etapa 1.</li>
+                <li><strong>A</strong> o <strong>Espacio</strong>: avanzar a la siguiente etapa.</li>
+                <li><strong>F</strong>: activar/desactivar pantalla completa.</li>
+                <li><strong>R</strong>: resetear posiciones de paneles.</li>
+                <li>Arrastra cualquier panel para personalizar la distribución.</li>
+            </ul>
+            <button onclick="closeHelpModal()">Entendido</button>
+        </div>
+    </div>
 
-    <div id="ekg-modal"
-        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
-        <div style="position:relative; width:90%; height:90%;">
-            <button onclick="closeEkgModal()"
-                style="position:absolute; top:-40px; right:0; color:white; background:red; border:none; padding:10px; font-size:1.2rem; cursor:pointer;">Cerrar
-                X</button>
-            <img id="ekg-modal-img" src="" style="width:100%; height:100%; object-fit:contain;">
+    <div id="ekg-modal" class="modal-shell" style="display:none;">
+        <div class="modal-card ekg-card">
+            <button onclick="closeEkgModal()" class="danger-btn close-btn">Cerrar ✕</button>
+            <img id="ekg-modal-img" src="" alt="ECG de 12 derivaciones" style="width:100%; height:100%; object-fit:contain;">
         </div>
     </div>
 
     <script>
         function closeEkgModal() {
             document.getElementById('ekg-modal').style.display = 'none';
+        }
+
+        function closeHelpModal() {
+            document.getElementById('help-modal').style.display = 'none';
         }
     </script>
 
